@@ -1,0 +1,22 @@
+Ringer Horseshoe Flight Path
+
+The game has two players, one on the far left and one on the far right of the playfield. Each player has a sand pit with a red pole/stake directly in front of them, near their feet. Players throw horseshoes across the entire width of the field — Player 1 throws from the left toward Player 2's pole on the right, and vice versa.
+
+The arc has 23 total positions:
+
+Positions 0–14 (15 ticks, in the air): The horseshoe travels in a smooth arcing path across the field from the thrower's hand to just before the opposite player's sand pit. These are evenly spaced along a bezier curve that peaks upward in the middle of the field. If the horseshoe stops on any of these, it's a miss (underthrow, 0 points).
+
+Positions 15–21 (7 ticks, in the sand pit): These are the scoring positions, placed at specific spots within the rectangular sand pit around the pole. The horseshoe visits them in this order:
+
+15: Top-left corner of pit (1 point)
+16: Bottom-left corner of pit (1 point)
+17: Near side of pole (2 points — leaner)
+18: On the pole (3 points — RINGER)
+19: Far side of pole (2 points — leaner)
+20: Top-right corner of pit (1 point)
+21: Bottom-right corner of pit (1 point)
+Position 22 (1 tick, past the pit): Overshoot. The horseshoe flew too hard and landed past the pit. Miss (0 points).
+
+Each scoring horseshoe (positions 15-21) displays its point value inside the U of the horseshoe shape. The horseshoe rotates in a stop-motion fashion as it travels, advancing roughly 2 ticks per second but slowing down in the last few positions for suspense. Each tick plays a typewriter-style mechanical click sound. A ringer plays a bell sound.
+
+The wheel spin power determines how far the horseshoe travels along this path — weak spins stop short (miss), the sweet spot lands in the pit scoring zones, and too much power overshoots past the pit.

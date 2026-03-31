@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ringer</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Luckiest+Guy&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="monitor-frame">
+        <div id="monitor-bezel">
+    <div id="game-container">
+        <canvas id="game-canvas"></canvas>
+
+        <!-- Player 1 label + score ticker (left tree silhouette) -->
+        <div class="player-label" id="label-p1">Nick</div>
+        <div class="score-ticker" id="score-p1">
+            <div class="digit" id="p1-tens">0</div>
+            <div class="digit" id="p1-ones">0</div>
+        </div>
+
+        <!-- Player 2 label + score ticker (right tree silhouette) -->
+        <div class="player-label" id="label-p2">Zack</div>
+        <div class="score-ticker" id="score-p2">
+            <div class="digit" id="p2-tens">0</div>
+            <div class="digit" id="p2-ones">0</div>
+        </div>
+
+        <!-- Start button (demo) -->
+        <button id="start-btn">START</button>
+    </div>
+        </div>
+        <div id="monitor-stand"></div>
+    </div>
+
+    <script src="js/config.js"></script>
+    <script src="js/flightpath.js"></script>
+    <script src="js/horseshoe.js"></script>
+    <script src="js/powermeter.js"></script>
+    <script src="js/sound.js"></script>
+    <script src="js/scoreticker.js"></script>
+    <script src="js/game.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
