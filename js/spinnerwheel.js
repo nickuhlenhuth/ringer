@@ -90,100 +90,113 @@ const SpinnerWheel = (() => {
         }
     }
 
-    function draw(ctx, lit) {
+    function draw(ctx) {
         const cx = cfg().CENTER_X;
         const cy = cfg().CENTER_Y;
         const r = cfg().RADIUS;
         const segments = cfg().SEGMENTS;
+        const s = r / 70;
+
+        // Metallic color palette
+        const metalDark = '#707880';
+        const metalMid = '#9aa4ae';
+        const metalLight = '#c8d0d8';
+        const metalHighlight = '#e0e6ec';
+        const markerColor = '#b8860b'; // dark gold marker spoke
 
         ctx.save();
 
-        const baseAlpha = lit ? 1.0 : 0.15;
-        ctx.globalAlpha = baseAlpha;
-
-        // Outer circle ring
-        ctx.strokeStyle = CONFIG.NEON_GREEN;
-        ctx.lineWidth = 3;
-        if (lit) {
-            ctx.shadowColor = CONFIG.NEON_GREEN;
-            ctx.shadowBlur = 14;
-        }
+        // Outer rim — thick metallic ring
+        ctx.strokeStyle = metalMid;
+        ctx.lineWidth = 6 * s;
+        ctx.shadowColor = 'rgba(0,0,0,0.4)';
+        ctx.shadowBlur = 6 * s;
         ctx.beginPath();
         ctx.arc(cx, cy, r, 0, Math.PI * 2);
         ctx.stroke();
 
-        // Inner bright ring pass
-        if (lit) {
-            ctx.strokeStyle = '#aaffaa';
-            ctx.lineWidth = 1;
-            ctx.shadowBlur = 4;
-            ctx.beginPath();
-            ctx.arc(cx, cy, r, 0, Math.PI * 2);
-            ctx.stroke();
-        }
+        // Inner highlight ring for bevel effect
         ctx.shadowBlur = 0;
+        ctx.strokeStyle = metalHighlight;
+        ctx.lineWidth = 1.5 * s;
+        ctx.beginPath();
+        ctx.arc(cx, cy, r - 3 * s, 0, Math.PI * 2);
+        ctx.stroke();
+
+        // Inner dark edge
+        ctx.strokeStyle = metalDark;
+        ctx.lineWidth = 1 * s;
+        ctx.beginPath();
+        ctx.arc(cx, cy, r + 2 * s, 0, Math.PI * 2);
+        ctx.stroke();
+
+        // Solid metallic face fill
+        const faceGrad = ctx.createRadialGradient(cx - r * 0.2, cy - r * 0.2, 0, cx, cy, r);
+        faceGrad.addColorStop(0, metalHighlight);
+        faceGrad.addColorStop(0.6, metalLight);
+        faceGrad.addColorStop(1, metalMid);
+        ctx.fillStyle = faceGrad;
+        ctx.beginPath();
+        ctx.arc(cx, cy, r - 3 * s, 0, Math.PI * 2);
+        ctx.fill();
 
         // Spokes
+        const spokeInner = 14 * s;
+        const spokeOuter = r - 8 * s;
         for (let i = 0; i < segments; i++) {
             const a = angle + (i / segments) * Math.PI * 2;
-            const x1 = cx + Math.cos(a) * 12;
-            const y1 = cy + Math.sin(a) * 12;
-            const x2 = cx + Math.cos(a) * (r - 6);
-            const y2 = cy + Math.sin(a) * (r - 6);
+            const x1 = cx + Math.cos(a) * spokeInner;
+            const y1 = cy + Math.sin(a) * spokeInner;
+            const x2 = cx + Math.cos(a) * spokeOuter;
+            const y2 = cy + Math.sin(a) * spokeOuter;
 
             const isMarker = i === 0;
 
-            ctx.strokeStyle = isMarker ? '#ffff44' : CONFIG.NEON_GREEN;
-            ctx.lineWidth = isMarker ? 4 : 2;
-            if (lit) {
-                ctx.shadowColor = isMarker ? '#ffff44' : CONFIG.NEON_GREEN;
-                ctx.shadowBlur = isMarker ? 16 : 10;
-            }
+            // Main spoke
+            ctx.strokeStyle = isMarker ? markerColor : metalMid;
+            ctx.lineWidth = (isMarker ? 5 : 3) * s;
+            ctx.shadowColor = 'rgba(0,0,0,0.3)';
+            ctx.shadowBlur = 2 * s;
             ctx.beginPath();
             ctx.moveTo(x1, y1);
             ctx.lineTo(x2, y2);
             ctx.stroke();
 
-            // Bright inner pass for marker spoke
-            if (isMarker && lit) {
-                ctx.strokeStyle = '#ffffaa';
-                ctx.lineWidth = 1.5;
-                ctx.shadowBlur = 3;
-                ctx.beginPath();
-                ctx.moveTo(x1, y1);
-                ctx.lineTo(x2, y2);
-                ctx.stroke();
-            }
+            // Highlight pass on each spoke
+            ctx.shadowBlur = 0;
+            ctx.strokeStyle = isMarker ? '#d4a82a' : metalLight;
+            ctx.lineWidth = (isMarker ? 2 : 1) * s;
+            ctx.beginPath();
+            ctx.moveTo(x1, y1);
+            ctx.lineTo(x2, y2);
+            ctx.stroke();
         }
         ctx.shadowBlur = 0;
 
-        // Center dot
-        ctx.fillStyle = lit ? CONFIG.NEON_GREEN : '#0a2a0e';
-        if (lit) {
-            ctx.shadowColor = CONFIG.NEON_GREEN;
-            ctx.shadowBlur = 8;
-        }
+        // Center hub — metallic circle
+        const hubRadius = 10 * s;
+        const hubGrad = ctx.createRadialGradient(cx - 2 * s, cy - 2 * s, 0, cx, cy, hubRadius);
+        hubGrad.addColorStop(0, metalHighlight);
+        hubGrad.addColorStop(0.5, metalMid);
+        hubGrad.addColorStop(1, metalDark);
+        ctx.fillStyle = hubGrad;
         ctx.beginPath();
-        ctx.arc(cx, cy, 6, 0, Math.PI * 2);
+        ctx.arc(cx, cy, hubRadius, 0, Math.PI * 2);
         ctx.fill();
-        ctx.shadowBlur = 0;
+
+        // Hub ring
+        ctx.strokeStyle = metalDark;
+        ctx.lineWidth = 1.5 * s;
+        ctx.beginPath();
+        ctx.arc(cx, cy, hubRadius, 0, Math.PI * 2);
+        ctx.stroke();
 
         // Label
-        ctx.globalAlpha = baseAlpha;
-        if (lit) {
-            ctx.shadowColor = CONFIG.NEON_GREEN;
-            ctx.shadowBlur = 10;
-        }
-        ctx.fillStyle = CONFIG.NEON_GREEN;
-        ctx.font = '16px "Courier New", monospace';
+        ctx.fillStyle = metalDark;
+        ctx.font = `bold ${Math.round(18 * s)}px "Luckiest Guy", "Arial Black", sans-serif`;
         ctx.textAlign = 'center';
-        ctx.fillText('SPIN', cx, cy + r + 20);
-
-        if (lit) {
-            ctx.shadowBlur = 3;
-            ctx.fillStyle = '#aaffaa';
-            ctx.fillText('SPIN', cx, cy + r + 20);
-        }
+        ctx.textBaseline = 'top';
+        ctx.fillText('SPIN', cx, cy + r + 12 * s);
 
         ctx.restore();
     }

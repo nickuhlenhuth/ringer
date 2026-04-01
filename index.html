@@ -8,30 +8,37 @@
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Luckiest+Guy&family=UnifrakturMaguntia&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div id="game-container">
-        <div id="dark-overlay"></div>
-        <div id="title-uhlenhuth">Uhlenhuth</div>
-        <canvas id="game-canvas"></canvas>
+    <div id="game-wrapper">
+        <div id="game-container">
+            <div id="dark-overlay"></div>
+            <div id="title-uhlenhuth">Uhlenhuth</div>
+            <canvas id="game-canvas"></canvas>
 
-        <!-- Player 1 label + score ticker (left tree silhouette) -->
-        <div class="player-label" id="label-p1">Nick</div>
-        <div class="score-ticker" id="score-p1">
-            <div class="digit" id="p1-tens">0</div>
-            <div class="digit" id="p1-ones">0</div>
+            <!-- Player 1 label + score ticker (left tree silhouette) -->
+            <div class="player-label" id="label-p1">Nick</div>
+            <div class="score-ticker" id="score-p1">
+                <div class="digit" id="p1-tens">0</div>
+                <div class="digit" id="p1-ones">0</div>
+            </div>
+
+            <!-- Player 2 label + score ticker (right tree silhouette) -->
+            <div class="player-label" id="label-p2">Zack</div>
+            <div class="score-ticker" id="score-p2">
+                <div class="digit" id="p2-tens">0</div>
+                <div class="digit" id="p2-ones">0</div>
+            </div>
         </div>
 
-        <!-- Player 2 label + score ticker (right tree silhouette) -->
-        <div class="player-label" id="label-p2">Zack</div>
-        <div class="score-ticker" id="score-p2">
-            <div class="digit" id="p2-tens">0</div>
-            <div class="digit" id="p2-ones">0</div>
+        <!-- Arcade Cabinet Panel -->
+        <div id="cabinet-panel">
+            <div id="cabinet-left">
+                <canvas id="spinner-canvas"></canvas>
+            </div>
+            <div id="cabinet-right">
+                <button id="start-btn">START</button>
+                <button id="dark-btn" title="Toggle Dark Mode (D)">DARK</button>
+            </div>
         </div>
-
-        <!-- Start button (demo) -->
-        <button id="start-btn">START</button>
-
-        <!-- Dark mode toggle -->
-        <button id="dark-btn" title="Toggle Dark Mode (D)">DARK</button>
     </div>
 
     <script src="js/config.js"></script>

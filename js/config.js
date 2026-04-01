@@ -122,13 +122,14 @@ const CONFIG = {
         gameOver: { x: 1218, y: 1015 }
     },
 
-    // Spinner wheel
+    // Spinner wheel (rendered on dedicated cabinet canvas)
     SPINNER: {
-        CENTER_X: 91,
-        CENTER_Y: 220,
-        RADIUS: 70,
-        HIT_RADIUS: 90,       // generous touch target
-        FRICTION: 3.0,        // rad/s^2 decay
+        CANVAS_SIZE: 800,     // logical size of spinner canvas
+        CENTER_X: 400,        // center of canvas
+        CENTER_Y: 400,        // center of canvas
+        RADIUS: 300,          // large wheel for cabinet
+        HIT_RADIUS: 380,      // generous touch target
+        FRICTION: 8.0,        // rad/s^2 decay
         MAX_VELOCITY: 30.0,   // rad/s cap → power 1.0
         SEGMENTS: 8
     },

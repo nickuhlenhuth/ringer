@@ -9,16 +9,23 @@
     canvas.width = CONFIG.WIDTH;
     canvas.height = CONFIG.HEIGHT;
 
+    // --- Spinner Canvas ---
+    const spinnerCanvas = document.getElementById('spinner-canvas');
+    const spinnerCtx = spinnerCanvas.getContext('2d');
+    spinnerCanvas.width = CONFIG.SPINNER.CANVAS_SIZE;
+    spinnerCanvas.height = CONFIG.SPINNER.CANVAS_SIZE;
+
     // --- Scaling ---
-    const container = document.getElementById('game-container');
+    const wrapper = document.getElementById('game-wrapper');
+    const TOTAL_HEIGHT = CONFIG.HEIGHT * 2; // gameplay + cabinet
     function resize() {
         const scaleX = window.innerWidth / CONFIG.WIDTH;
-        const scaleY = window.innerHeight / CONFIG.HEIGHT;
+        const scaleY = window.innerHeight / TOTAL_HEIGHT;
         const scale = Math.min(scaleX, scaleY);
-        container.style.transform = `scale(${scale})`;
-        container.style.transformOrigin = 'top left';
-        container.style.marginLeft = ((window.innerWidth - CONFIG.WIDTH * scale) / 2) + 'px';
-        container.style.marginTop = ((window.innerHeight - CONFIG.HEIGHT * scale) / 2) + 'px';
+        wrapper.style.transform = `scale(${scale})`;
+        wrapper.style.transformOrigin = 'top left';
+        wrapper.style.marginLeft = ((window.innerWidth - CONFIG.WIDTH * scale) / 2) + 'px';
+        wrapper.style.marginTop = ((window.innerHeight - TOTAL_HEIGHT * scale) / 2) + 'px';
     }
     window.addEventListener('resize', resize);
     resize();
@@ -184,8 +191,9 @@
         drawRingerLabel('GAME', gx, gy - 14, gameOverLit);
         drawRingerLabel('OVER', gx, gy + 14, gameOverLit);
 
-        // Spinner wheel — always visible
-        SpinnerWheel.draw(ctx, gs.phase === 'PLAYER_AIM');
+        // Spinner wheel — drawn on dedicated cabinet canvas
+        spinnerCtx.clearRect(0, 0, CONFIG.SPINNER.CANVAS_SIZE, CONFIG.SPINNER.CANVAS_SIZE);
+        SpinnerWheel.draw(spinnerCtx);
     }
 
 
@@ -300,32 +308,31 @@
     }
     document.getElementById('dark-btn').addEventListener('click', toggleDarkMode);
 
-    // --- Input (Spinner Wheel) ---
+    // --- Input (Spinner Wheel — on cabinet canvas) ---
     let spinnerTracking = false;
 
-    function getCanvasCoords(clientX, clientY) {
-        const rect = canvas.getBoundingClientRect();
-        const scaleX = CONFIG.WIDTH / rect.width;
-        const scaleY = CONFIG.HEIGHT / rect.height;
+    function getSpinnerCoords(clientX, clientY) {
+        const rect = spinnerCanvas.getBoundingClientRect();
+        const scale = CONFIG.SPINNER.CANVAS_SIZE / rect.width;
         return {
-            x: (clientX - rect.left) * scaleX,
-            y: (clientY - rect.top) * scaleY
+            x: (clientX - rect.left) * scale,
+            y: (clientY - rect.top) * scale
         };
     }
 
-    canvas.addEventListener('mousedown', (e) => {
+    spinnerCanvas.addEventListener('mousedown', (e) => {
         const gs = Game.getState();
         if (gs.phase !== 'PLAYER_AIM') return;
         Sound.ensureContext();
-        const coords = getCanvasCoords(e.clientX, e.clientY);
+        const coords = getSpinnerCoords(e.clientX, e.clientY);
         if (SpinnerWheel.handlePointerDown(coords.x, coords.y)) {
             spinnerTracking = true;
         }
     });
 
-    canvas.addEventListener('mousemove', (e) => {
+    spinnerCanvas.addEventListener('mousemove', (e) => {
         if (!spinnerTracking) return;
-        const coords = getCanvasCoords(e.clientX, e.clientY);
+        const coords = getSpinnerCoords(e.clientX, e.clientY);
         SpinnerWheel.handlePointerMove(coords.x, coords.y);
     });
 
@@ -338,23 +345,23 @@
         }
     });
 
-    canvas.addEventListener('touchstart', (e) => {
+    spinnerCanvas.addEventListener('touchstart', (e) => {
         const gs = Game.getState();
         if (gs.phase !== 'PLAYER_AIM') return;
         e.preventDefault();
         Sound.ensureContext();
         const touch = e.touches[0];
-        const coords = getCanvasCoords(touch.clientX, touch.clientY);
+        const coords = getSpinnerCoords(touch.clientX, touch.clientY);
         if (SpinnerWheel.handlePointerDown(coords.x, coords.y)) {
             spinnerTracking = true;
         }
     });
 
-    canvas.addEventListener('touchmove', (e) => {
+    spinnerCanvas.addEventListener('touchmove', (e) => {
         if (!spinnerTracking) return;
         e.preventDefault();
         const touch = e.touches[0];
-        const coords = getCanvasCoords(touch.clientX, touch.clientY);
+        const coords = getSpinnerCoords(touch.clientX, touch.clientY);
         SpinnerWheel.handlePointerMove(coords.x, coords.y);
     });
 

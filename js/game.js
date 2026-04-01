@@ -48,7 +48,7 @@ const Game = (() => {
         state.phase = 'THROWING';
         state.lastScore = 0;
         PowerMeter.reset();
-        SpinnerWheel.reset();
+        // Don't reset spinner — let it coast to a stop visually
         Sound.playTick();
     }
 

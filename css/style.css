@@ -15,6 +15,12 @@ body {
     user-select: none;
 }
 
+#game-wrapper {
+    position: relative;
+    width: 1920px;
+    height: 2160px;
+}
+
 #game-container {
     position: relative;
     width: 1920px;
@@ -22,8 +28,138 @@ body {
     background-image: url('../images/no-hoot.png');
     background-size: 1920px 1080px;
     background-repeat: no-repeat;
-    border-radius: 4px;
+    border-radius: 4px 4px 0 0;
     overflow: hidden;
+}
+
+/* --- Arcade Cabinet Panel --- */
+
+#cabinet-panel {
+    width: 1920px;
+    height: 1080px;
+    background:
+        /* water stain / ring mark near bottom-left */
+        radial-gradient(ellipse 14% 10% at 22% 78%,
+            rgba(0,0,0,0.06) 0%,
+            rgba(0,0,0,0.03) 50%,
+            transparent 70%
+        ),
+        /* faded scuff — broad smear upper-right */
+        radial-gradient(ellipse 25% 8% at 72% 25%,
+            rgba(255,255,255,0.07) 0%,
+            transparent 80%
+        ),
+        /* dark blotch — small stain mid-left */
+        radial-gradient(ellipse 8% 12% at 15% 45%,
+            rgba(0,0,0,0.05) 0%,
+            transparent 70%
+        ),
+        /* lighter worn patch — where hands rest, right-center */
+        radial-gradient(ellipse 18% 22% at 75% 55%,
+            rgba(255,255,255,0.06) 0%,
+            rgba(255,255,255,0.02) 60%,
+            transparent 100%
+        ),
+        /* small dark spot near top center */
+        radial-gradient(circle 30px at 42% 12%,
+            rgba(0,0,0,0.06) 0%,
+            transparent 100%
+        ),
+        /* broad sun-bleached area — asymmetric, off-center */
+        radial-gradient(ellipse 55% 40% at 58% 38%,
+            rgba(255,255,255,0.07) 0%,
+            rgba(255,255,255,0.03) 50%,
+            transparent 100%
+        ),
+        /* worn shadow — bottom-right corner heavier than left */
+        radial-gradient(ellipse 40% 30% at 85% 90%,
+            rgba(0,0,0,0.09) 0%,
+            transparent 80%
+        ),
+        /* faint diagonal discoloration streak */
+        linear-gradient(125deg,
+            transparent 0%, transparent 35%,
+            rgba(0,0,0,0.025) 38%,
+            rgba(0,0,0,0.015) 42%,
+            transparent 46%,
+            transparent 100%
+        ),
+        /* worn edges — heavier top, uneven bottom */
+        linear-gradient(to bottom,
+            rgba(0,0,0,0.13) 0%,
+            rgba(0,0,0,0.04) 4%,
+            transparent 12%,
+            transparent 82%,
+            rgba(0,0,0,0.03) 90%,
+            rgba(0,0,0,0.10) 100%
+        ),
+        /* left edge slightly darker than right */
+        linear-gradient(to right,
+            rgba(0,0,0,0.07) 0%,
+            transparent 5%,
+            transparent 93%,
+            rgba(0,0,0,0.04) 100%
+        ),
+        /* asymmetric vignette — shifted toward bottom-right */
+        radial-gradient(ellipse 130% 110% at 45% 45%,
+            transparent 35%,
+            rgba(0,0,0,0.09) 100%
+        ),
+        /* base colour — organic diagonal variation */
+        linear-gradient(165deg,
+            #5f9bcc 0%,
+            #6aa3d4 25%,
+            #6da8d5 45%,
+            #6ba4d2 65%,
+            #6199cb 85%,
+            #5b93c5 100%
+        );
+    display: flex;
+    overflow: hidden;
+    border-radius: 0 0 4px 4px;
+    position: relative;
+}
+
+/* Noise grain overlay for texture */
+#cabinet-panel::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='5' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.15'/%3E%3C/svg%3E");
+    background-repeat: repeat;
+    mix-blend-mode: soft-light;
+    opacity: 0.35;
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* Ensure children sit above the grain */
+#cabinet-panel > * {
+    position: relative;
+    z-index: 1;
+}
+
+#cabinet-left {
+    width: 960px;
+    height: 1080px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#spinner-canvas {
+    width: 800px;
+    height: 800px;
+}
+
+#cabinet-right {
+    width: 960px;
+    height: 1080px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 60px;
 }
 
 #game-canvas {
@@ -55,21 +191,17 @@ body {
 }
 
 #dark-btn {
-    position: absolute;
-    top: 92px;
-    right: 12px;
-    z-index: 20;
-    width: 72px;
-    height: 72px;
+    width: 180px;
+    height: 180px;
     border-radius: 50%;
     font-family: 'Luckiest Guy', cursive;
-    font-size: 14px;
-    letter-spacing: 1px;
+    font-size: 36px;
+    letter-spacing: 2px;
     color: #fff;
     background: #333;
-    border: 4px solid #555;
+    border: 8px solid #555;
     cursor: pointer;
-    box-shadow: 0 3px 0 #111;
+    box-shadow: 0 6px 0 #111;
     transition: all 0.1s ease;
 }
 
@@ -78,8 +210,8 @@ body {
 }
 
 #dark-btn:active {
-    transform: translateY(2px);
-    box-shadow: 0 1px 0 #111;
+    transform: translateY(4px);
+    box-shadow: 0 2px 0 #111;
 }
 
 /* --- Title Text --- */
@@ -107,6 +239,38 @@ body {
         0 0 10px rgba(255,32,32,0.6),
         0 0 18px rgba(255,32,32,0.18),
         0 0 30px rgba(255,32,32,0.1);
+}
+
+#dark-overlay.active ~ .score-ticker {
+    background: #3a3a3a;
+    box-shadow:
+        inset 0 2px 4px rgba(255,255,255,0.08),
+        inset 0 -2px 4px rgba(0,0,0,0.5),
+        0 1px 3px rgba(0,0,0,0.7);
+    transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+
+#dark-overlay.active ~ .score-ticker .digit-upper {
+    background: linear-gradient(to bottom, #fff6e0, #e8dcc8);
+    box-shadow:
+        inset 0 4px 10px rgba(255,210,140,0.5),
+        inset 0 1px 3px rgba(255,230,180,0.6),
+        inset 2px 0 3px rgba(0,0,0,0.12),
+        inset -2px 0 3px rgba(0,0,0,0.12);
+}
+
+#dark-overlay.active ~ .score-ticker .digit {
+    border-color: #4a4a4a;
+    border-top-color: #5a5248;
+}
+
+#dark-overlay.active ~ .score-ticker .digit-lower {
+    background: linear-gradient(to bottom, #d2cab8, #b8b0a0);
+    box-shadow:
+        inset 0 -3px 6px rgba(0,0,0,0.4),
+        inset 0 -1px 2px rgba(0,0,0,0.2),
+        inset 2px 0 3px rgba(0,0,0,0.2),
+        inset -2px 0 3px rgba(0,0,0,0.2);
 }
 
 /* --- Player Labels --- */
@@ -153,6 +317,7 @@ body {
         inset 0 2px 4px rgba(255,255,255,0.4),
         inset 0 -2px 4px rgba(0,0,0,0.3),
         0 1px 3px rgba(0,0,0,0.5);
+    transition: background 0.3s ease, box-shadow 0.3s ease;
 }
 
 #score-p1 {
@@ -264,21 +429,17 @@ body {
 /* --- Start Button (Arcade) --- */
 
 #start-btn {
-    position: absolute;
-    top: 12px;
-    right: 12px;
-    z-index: 20;
-    width: 72px;
-    height: 72px;
+    width: 180px;
+    height: 180px;
     border-radius: 50%;
     font-family: 'Luckiest Guy', cursive;
-    font-size: 16px;
-    letter-spacing: 1px;
+    font-size: 40px;
+    letter-spacing: 2px;
     color: #fff;
     background: #cc0000;
-    border: 4px solid #333;
+    border: 8px solid #333;
     cursor: pointer;
-    box-shadow: 0 3px 0 #800000;
+    box-shadow: 0 6px 0 #800000;
     transition: all 0.1s ease;
 }
 
@@ -287,8 +448,8 @@ body {
 }
 
 #start-btn:active {
-    transform: translateY(2px);
-    box-shadow: 0 1px 0 #800000;
+    transform: translateY(4px);
+    box-shadow: 0 2px 0 #800000;
 }
 
 /* --- Throw Button (below power meter) --- */
