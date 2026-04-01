@@ -33,15 +33,23 @@
     // --- Init ---
     ScoreTicker.init();
 
+    // --- Dark mode elements ---
+    const darkOverlay = document.getElementById('dark-overlay');
+    const cabinetDim = document.getElementById('cabinet-dim');
+    const cabinetPanel = document.getElementById('cabinet-panel');
+
     // --- Start button ---
     const pregameDim = document.getElementById('pregame-dim');
+    const pregameCabinetDim = document.getElementById('pregame-cabinet-dim');
     document.getElementById('start-btn').addEventListener('click', async () => {
         Sound.ensureContext();
         await Sound.init();
         Sound.playStart();
         Game.startGame();
         pregameDim.classList.add('hidden');
+        pregameCabinetDim.classList.add('hidden');
         pregameDim.addEventListener('transitionend', () => pregameDim.remove(), { once: true });
+        pregameCabinetDim.addEventListener('transitionend', () => pregameCabinetDim.remove(), { once: true });
     });
 
     // --- Neon text helper ---
@@ -305,9 +313,6 @@
     requestAnimationFrame(gameLoop);
 
     // --- Dark Mode ---
-    const darkOverlay = document.getElementById('dark-overlay');
-    const cabinetDim = document.getElementById('cabinet-dim');
-    const cabinetPanel = document.getElementById('cabinet-panel');
     function toggleDarkMode() {
         darkOverlay.classList.toggle('active');
         cabinetDim.classList.toggle('active');

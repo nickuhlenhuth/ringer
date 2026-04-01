@@ -84,7 +84,7 @@ body {
     z-index: 2;
 }
 
-/* --- Pre-game Dim Overlay --- */
+/* --- Pre-game Dim Overlays (cover everything before Start) --- */
 
 #pregame-dim {
     position: absolute;
@@ -92,13 +92,29 @@ body {
     left: 0;
     width: 1920px;
     height: 1080px;
-    background: rgba(0, 0, 0, 0.6);
+    background: rgba(0, 0, 0, 0.75);
     z-index: 100;
     pointer-events: none;
     transition: opacity 0.5s ease;
 }
 
 #pregame-dim.hidden {
+    opacity: 0;
+}
+
+#pregame-cabinet-dim {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 1920px;
+    height: 1080px;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 100;
+    pointer-events: none;
+    transition: opacity 0.5s ease;
+}
+
+#pregame-cabinet-dim.hidden {
     opacity: 0;
 }
 
@@ -122,6 +138,10 @@ body {
 }
 
 #dark-btn {
+    position: absolute;
+    z-index: 1;
+    left: 1350px;
+    top: 310px;
     width: 180px;
     height: 180px;
     border-radius: 50%;
@@ -396,6 +416,10 @@ body {
 /* --- Start Button (Arcade) --- */
 
 #start-btn {
+    position: absolute;
+    z-index: 101;
+    left: 1350px;
+    top: 70px;
     width: 180px;
     height: 180px;
     border-radius: 50%;
@@ -406,12 +430,21 @@ body {
     background: #cc0000;
     border: 8px solid #333;
     cursor: pointer;
-    box-shadow: 0 6px 0 #800000;
+    box-shadow:
+        0 6px 0 #800000,
+        0 0 15px rgba(255, 0, 0, 0.6),
+        0 0 40px rgba(255, 0, 0, 0.4),
+        0 0 80px rgba(255, 0, 0, 0.2);
     transition: all 0.1s ease;
 }
 
 #start-btn:hover {
     background: #dd1111;
+    box-shadow:
+        0 6px 0 #800000,
+        0 0 20px rgba(255, 0, 0, 0.8),
+        0 0 50px rgba(255, 0, 0, 0.5),
+        0 0 100px rgba(255, 0, 0, 0.3);
 }
 
 #start-btn:active {

@@ -11,6 +11,7 @@
     <div id="game-wrapper">
         <div id="game-container">
             <div id="dark-overlay"></div>
+            <div id="pregame-dim"></div>
             <div id="title-uhlenhuth">Uhlenhuth</div>
             <canvas id="game-canvas"></canvas>
 
@@ -29,19 +30,16 @@
             </div>
         </div>
 
-        <!-- Pre-game dim overlay (removed on Start) -->
-        <div id="pregame-dim"></div>
-
         <!-- Arcade Cabinet Panel -->
         <div id="cabinet-panel">
             <div id="cabinet-dim"></div>
+            <div id="pregame-cabinet-dim"></div>
             <div id="cabinet-left">
                 <canvas id="spinner-canvas"></canvas>
             </div>
-            <div id="cabinet-right">
-                <button id="start-btn">START</button>
-                <button id="dark-btn" title="Toggle Dark Mode (D)">DARK</button>
-            </div>
+            <div id="cabinet-right"></div>
+            <button id="start-btn">START</button>
+            <button id="dark-btn" title="Toggle Dark Mode (D)">DARK</button>
         </div>
     </div>
 
