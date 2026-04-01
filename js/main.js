@@ -296,29 +296,52 @@
     // --- Input ---
     let spaceDown = false;
 
-    document.addEventListener('keydown', (e) => {
-        if (e.code !== 'Space' || e.repeat) return;
-        e.preventDefault();
-
+    function beginThrow() {
         Sound.ensureContext();
         const gs = Game.getState();
-
         if (gs.phase === 'PLAYER_AIM') {
             spaceDown = true;
             PowerMeter.start();
         }
-    });
+    }
 
-    document.addEventListener('keyup', (e) => {
-        if (e.code !== 'Space') return;
-        e.preventDefault();
-
+    function releaseThrow() {
         const gs = Game.getState();
-
         if (gs.phase === 'PLAYER_AIM' && spaceDown) {
             spaceDown = false;
             const power = PowerMeter.stop();
             Game.executeThrow(power);
         }
+    }
+
+    document.addEventListener('keydown', (e) => {
+        if (e.code !== 'Space' || e.repeat) return;
+        e.preventDefault();
+        beginThrow();
+    });
+
+    document.addEventListener('keyup', (e) => {
+        if (e.code !== 'Space') return;
+        e.preventDefault();
+        releaseThrow();
+    });
+
+    // --- Throw button (press-and-hold) ---
+    const throwBtn = document.getElementById('throw-btn');
+
+    throwBtn.addEventListener('mousedown', (e) => {
+        e.preventDefault();
+        beginThrow();
+    });
+    document.addEventListener('mouseup', () => {
+        if (spaceDown) releaseThrow();
+    });
+
+    throwBtn.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        beginThrow();
+    });
+    document.addEventListener('touchend', () => {
+        if (spaceDown) releaseThrow();
     });
 })();
