@@ -37,103 +37,14 @@ body {
 #cabinet-panel {
     width: 1920px;
     height: 1080px;
-    background:
-        /* water stain / ring mark near bottom-left */
-        radial-gradient(ellipse 14% 10% at 22% 78%,
-            rgba(0,0,0,0.06) 0%,
-            rgba(0,0,0,0.03) 50%,
-            transparent 70%
-        ),
-        /* faded scuff — broad smear upper-right */
-        radial-gradient(ellipse 25% 8% at 72% 25%,
-            rgba(255,255,255,0.07) 0%,
-            transparent 80%
-        ),
-        /* dark blotch — small stain mid-left */
-        radial-gradient(ellipse 8% 12% at 15% 45%,
-            rgba(0,0,0,0.05) 0%,
-            transparent 70%
-        ),
-        /* lighter worn patch — where hands rest, right-center */
-        radial-gradient(ellipse 18% 22% at 75% 55%,
-            rgba(255,255,255,0.06) 0%,
-            rgba(255,255,255,0.02) 60%,
-            transparent 100%
-        ),
-        /* small dark spot near top center */
-        radial-gradient(circle 30px at 42% 12%,
-            rgba(0,0,0,0.06) 0%,
-            transparent 100%
-        ),
-        /* broad sun-bleached area — asymmetric, off-center */
-        radial-gradient(ellipse 55% 40% at 58% 38%,
-            rgba(255,255,255,0.07) 0%,
-            rgba(255,255,255,0.03) 50%,
-            transparent 100%
-        ),
-        /* worn shadow — bottom-right corner heavier than left */
-        radial-gradient(ellipse 40% 30% at 85% 90%,
-            rgba(0,0,0,0.09) 0%,
-            transparent 80%
-        ),
-        /* faint diagonal discoloration streak */
-        linear-gradient(125deg,
-            transparent 0%, transparent 35%,
-            rgba(0,0,0,0.025) 38%,
-            rgba(0,0,0,0.015) 42%,
-            transparent 46%,
-            transparent 100%
-        ),
-        /* worn edges — heavier top, uneven bottom */
-        linear-gradient(to bottom,
-            rgba(0,0,0,0.13) 0%,
-            rgba(0,0,0,0.04) 4%,
-            transparent 12%,
-            transparent 82%,
-            rgba(0,0,0,0.03) 90%,
-            rgba(0,0,0,0.10) 100%
-        ),
-        /* left edge slightly darker than right */
-        linear-gradient(to right,
-            rgba(0,0,0,0.07) 0%,
-            transparent 5%,
-            transparent 93%,
-            rgba(0,0,0,0.04) 100%
-        ),
-        /* asymmetric vignette — shifted toward bottom-right */
-        radial-gradient(ellipse 130% 110% at 45% 45%,
-            transparent 35%,
-            rgba(0,0,0,0.09) 100%
-        ),
-        /* base colour — organic diagonal variation */
-        linear-gradient(165deg,
-            #5f9bcc 0%,
-            #6aa3d4 25%,
-            #6da8d5 45%,
-            #6ba4d2 65%,
-            #6199cb 85%,
-            #5b93c5 100%
-        );
+    background: url('../images/cabinet.png') center / 1920px 1080px no-repeat;
     display: flex;
     overflow: hidden;
     border-radius: 0 0 4px 4px;
     position: relative;
 }
 
-/* Noise grain overlay for texture */
-#cabinet-panel::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='5' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.15'/%3E%3C/svg%3E");
-    background-repeat: repeat;
-    mix-blend-mode: soft-light;
-    opacity: 0.35;
-    pointer-events: none;
-    z-index: 0;
-}
-
-/* Ensure children sit above the grain */
+/* Ensure children sit above the background */
 #cabinet-panel > * {
     position: relative;
     z-index: 1;
@@ -145,6 +56,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
+    padding-bottom: 320px;
 }
 
 #spinner-canvas {
@@ -160,6 +72,7 @@ body {
     align-items: center;
     justify-content: center;
     gap: 60px;
+    padding-bottom: 320px;
 }
 
 #game-canvas {
@@ -169,6 +82,24 @@ body {
     width: 1920px;
     height: 1080px;
     z-index: 2;
+}
+
+/* --- Pre-game Dim Overlay --- */
+
+#pregame-dim {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 1920px;
+    height: 1080px;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 100;
+    pointer-events: none;
+    transition: opacity 0.5s ease;
+}
+
+#pregame-dim.hidden {
+    opacity: 0;
 }
 
 /* --- Dark Mode Overlay --- */
@@ -212,6 +143,42 @@ body {
 #dark-btn:active {
     transform: translateY(4px);
     box-shadow: 0 2px 0 #111;
+}
+
+/* --- Cabinet Dark Mode Overlay --- */
+
+#cabinet-dim {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 1920px;
+    height: 1080px;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 2;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+#cabinet-dim.active {
+    opacity: 1;
+}
+
+/* Lift interactive elements above the cabinet dim overlay, with their own lighter dim */
+#cabinet-panel.dark #cabinet-left,
+#cabinet-panel.dark #cabinet-right {
+    z-index: 3;
+}
+
+#cabinet-panel.dark #spinner-canvas {
+    filter: brightness(0.775);
+    transition: filter 0.3s ease;
+}
+
+#cabinet-panel.dark #start-btn,
+#cabinet-panel.dark #dark-btn {
+    filter: brightness(0.775);
+    transition: filter 0.3s ease;
 }
 
 /* --- Title Text --- */

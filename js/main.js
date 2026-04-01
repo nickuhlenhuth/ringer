@@ -34,11 +34,14 @@
     ScoreTicker.init();
 
     // --- Start button ---
+    const pregameDim = document.getElementById('pregame-dim');
     document.getElementById('start-btn').addEventListener('click', async () => {
         Sound.ensureContext();
         await Sound.init();
         Sound.playStart();
         Game.startGame();
+        pregameDim.classList.add('hidden');
+        pregameDim.addEventListener('transitionend', () => pregameDim.remove(), { once: true });
     });
 
     // --- Neon text helper ---
@@ -303,8 +306,12 @@
 
     // --- Dark Mode ---
     const darkOverlay = document.getElementById('dark-overlay');
+    const cabinetDim = document.getElementById('cabinet-dim');
+    const cabinetPanel = document.getElementById('cabinet-panel');
     function toggleDarkMode() {
         darkOverlay.classList.toggle('active');
+        cabinetDim.classList.toggle('active');
+        cabinetPanel.classList.toggle('dark');
     }
     document.getElementById('dark-btn').addEventListener('click', toggleDarkMode);
 

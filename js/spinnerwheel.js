@@ -191,12 +191,6 @@ const SpinnerWheel = (() => {
         ctx.arc(cx, cy, hubRadius, 0, Math.PI * 2);
         ctx.stroke();
 
-        // Label
-        ctx.fillStyle = metalDark;
-        ctx.font = `bold ${Math.round(18 * s)}px "Luckiest Guy", "Arial Black", sans-serif`;
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'top';
-        ctx.fillText('SPIN', cx, cy + r + 12 * s);
 
         ctx.restore();
     }
