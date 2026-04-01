@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bell Sound Sampler</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #1a1a2e;
+    color: #e0e0e0;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    padding: 40px 20px;
+  }
+  h1 {
+    text-align: center;
+    color: #00ff88;
+    margin-bottom: 10px;
+    font-size: 1.6rem;
+  }
+  .subtitle {
+    text-align: center;
+    color: #888;
+    margin-bottom: 40px;
+    font-size: 0.9rem;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+  .card {
+    background: #16213e;
+    border: 1px solid #333;
+    border-radius: 12px;
+    padding: 24px;
+    transition: border-color 0.2s;
+  }
+  .card:hover { border-color: #00ff88; }
+  .card h2 {
+    color: #00ff88;
+    font-size: 1.1rem;
+    margin-bottom: 6px;
+  }
+  .card .desc {
+    color: #999;
+    font-size: 0.82rem;
+    line-height: 1.4;
+    margin-bottom: 16px;
+  }
+  .card .tag {
+    display: inline-block;
+    background: #0a3d2a;
+    color: #00ff88;
+    font-size: 0.7rem;
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin-bottom: 12px;
+  }
+  .card .tag.ringer { background: #3d2a0a; color: #ffaa00; }
+  .card .tag.points { background: #0a2a3d; color: #44aaff; }
+  button {
+    background: #00ff88;
+    color: #1a1a2e;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 24px;
+    font-weight: 700;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: background 0.15s;
+    margin-right: 8px;
+    margin-bottom: 6px;
+  }
+  button:hover { background: #33ffaa; }
+  button:active { transform: scale(0.97); }
+  button.secondary {
+    background: #333;
+    color: #ccc;
+  }
+  button.secondary:hover { background: #444; }
+  .section-label {
+    text-align: center;
+    color: #666;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin: 30px 0 15px;
+    max-width: 1000px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .current { border-left: 3px solid #ff6644; }
+  .current .tag { background: #3d1a0a; color: #ff6644; }
+</style>
+</head>
+<body>
+
+<h1>Bell Sound Sampler</h1>
+<p class="subtitle">Click to compare — pick the best ringer bell and the best points bell</p>
+
+<div class="section-label">— Current Ringer Sound (reference) —</div>
+<div class="grid">
+  <div class="card current">
+    <h2>Current Ringer Chime</h2>
+    <span class="tag">CURRENT</span>
+    <p class="desc">The existing ringer sound from sound.js — three sine harmonics (880, 1320, 1760Hz) with 600ms decay. Simple and clean.</p>
+    <button onclick="playCurrent()">Play</button>
+    <button class="secondary" onclick="playRepeat(playCurrent)">Play 3x</button>
+  </div>
+</div>
+
+<div class="section-label">— Ringer Bells (big, celebratory, unmistakable) —</div>
+<div class="grid">
+
+  <div class="card">
+    <h2>R1: Church Bell</h2>
+    <span class="tag ringer">RINGER</span>
+    <p class="desc">Deep, resonant bell strike with rich overtones. A low fundamental (220Hz) with inharmonic partials that shimmer and decay slowly. Majestic and weighty.</p>
+    <button onclick="playR1()">Play</button>
+    <button class="secondary" onclick="playRepeat(playR1)">Play 3x</button>
+  </div>
+
+  <div class="card">
+    <h2>R2: Victory Chime</h2>
+    <span class="tag ringer">RINGER</span>
+    <p class="desc">Bright ascending two-note chime — a quick "ding-DONG" with the second note higher and longer. Feels like winning something.</p>
+    <button onclick="playR2()">Play</button>
+    <button class="secondary" onclick="playRepeat(playR2)">Play 3x</button>
+  </div>
+
+  <div class="card">
+    <h2>R3: Boxing Bell</h2>
+    <span class="tag ringer">RINGER</span>
+    <p class="desc">Sharp metallic bell hit — like the bell at a carnival strongman game or boxing ring. Bright attack with a ringing sustain.</p>
+    <button onclick="playR3()">Play</button>
+    <button class="secondary" onclick="playRepeat(playR3)">Play 3x</button>
+  </div>
+
+  <div class="card">
+    <h2>R4: Tubular Bell</h2>
+    <span class="tag ringer">RINGER</span>
+    <p class="desc">Orchestral tubular bell sound — clear fundamental with shimmering metallic overtones. Long sustain with a gentle wobble from detuned partials.</p>
+    <button onclick="playR4()">Play</button>
+    <button class="secondary" onclick="playRepeat(playR4)">Play 3x</button>
+  </div>
+
+  <div class="card">
+    <h2>R5: Triple Chime</h2>
+    <span class="tag ringer">RINGER</span>
+    <p class="desc">Three quick ascending bell tones (like a slot machine win). Each note is a clean bell hit stepping up a major third. Celebratory and unmistakable.</p>
+    <button onclick="playR5()">Play</button>
+    <button class="secondary" onclick="playRepeat(playR5)">Play 3x</button>
+  </div>
+
+  <div class="card">
+    <h2>R6: Gong Shimmer</h2>
+    <span class="tag ringer">RINGER</span>
+    <p class="desc">Deep gong-like hit that blooms with shimmering harmonics. Starts dark, then the upper partials swell in — epic and dramatic.</p>
+    <button onclick="playR6()">Play</button>
+    <button class="secondary" onclick="playRepeat(playR6)">Play 3x</button>
+  </div>
+
+</div>
+
+<div class="section-label">— Points Bells (lighter, for scoring 1 or 2 points) —</div>
+<div class="grid">
+
+  <div class="card">
+    <h2>P1: Desk Bell</h2>
+    <span class="tag points">POINTS</span>
+    <p class="desc">Quick, bright "ting!" like tapping a hotel desk bell. Short sustain, clean and satisfying. No-nonsense positive feedback.</p>
+    <button onclick="playP1()">Play</button>
+    <button class="secondary" onclick="playRepeat(playP1)">Play 3x</button>
+  </div>
+
+  <div class="card">
+    <h2>P2: Cash Register</h2>
+    <span class="tag points">POINTS</span>
+    <p class="desc">Bright, quick "ka-ching" bell — a sharp metallic ping with a tiny rattle tail. Feels like earning something.</p>
+    <button onclick="playP2()">Play</button>
+    <button class="secondary" onclick="playRepeat(playP2)">Play 3x</button>
+  </div>
+
+  <div class="card">
+    <h2>P3: Soft Chime</h2>
+    <span class="tag points">POINTS</span>
+    <p class="desc">Gentle, warm bell tone — sine-based with a soft attack. Subtle and pleasant, won't get annoying on repeat.</p>
+    <button onclick="playP3()">Play</button>
+    <button class="secondary" onclick="playRepeat(playP3)">Play 3x</button>
+  </div>
+
+  <div class="card">
+    <h2>P4: Xylophone Tap</h2>
+    <span class="tag points">POINTS</span>
+    <p class="desc">Bright, woody bell tone — like tapping a xylophone bar. Very short and percussive with a clean pitch. Snappy and game-like.</p>
+    <button onclick="playP4()">Play</button>
+    <button class="secondary" onclick="playRepeat(playP4)">Play 3x</button>
+  </div>
+
+  <div class="card">
+    <h2>P5: Triangle Ding</h2>
+    <span class="tag points">POINTS</span>
+    <p class="desc">Orchestral triangle hit — bright, metallic shimmer with a quick decay. Clear pitch center with sparkly overtones.</p>
+    <button onclick="playP5()">Play</button>
+    <button class="secondary" onclick="playRepeat(playP5)">Play 3x</button>
+  </div>
+
+  <div class="card">
+    <h2>P6: Coin Drop</h2>
+    <span class="tag points">POINTS</span>
+    <p class="desc">Quick descending "plink" — like a coin landing. Short bright attack that bends down slightly. Fun and arcadey.</p>
+    <button onclick="playP6()">Play</button>
+    <button class="secondary" onclick="playRepeat(playP6)">Play 3x</button>
+  </div>
+
+</div>
+
+<div class="section-label">— Typewriter Ticks (individually spliced from MP3) —</div>
+<div class="grid">
+  <div class="card">
+    <h2>Random Tick</h2>
+    <span class="tag">TICK</span>
+    <p class="desc"><span id="tick-status" style="color:#ff6644">Loading MP3...</span></p>
+    <button onclick="playRandomTick()">Play Random</button>
+    <button class="secondary" onclick="playRepeat(playRandomTick)">Play 3x</button>
+  </div>
+</div>
+<div id="tick-grid" class="grid" style="margin-top:20px"></div>
+
+<script>
+let audioCtx = null;
+function ctx() {
+  if (!audioCtx) audioCtx = new AudioContext();
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+  return audioCtx;
+}
+
+// ── Typewriter MP3 tick sampler ──
+let tickBuffer = null;
+let tickSlices = [];
+
+(async function loadTickMP3() {
+  try {
+    const c = ctx();
+    const response = await fetch('sounds/typewriter-keys-typing-slowly-ftus-1-00-09.mp3');
+    const arrayBuffer = await response.arrayBuffer();
+    tickBuffer = await c.decodeAudioData(arrayBuffer);
+
+    // Detect transients
+    const data = tickBuffer.getChannelData(0);
+    const sr = tickBuffer.sampleRate;
+    const windowSize = Math.floor(sr * 0.005);
+    const minGap = Math.floor(sr * 0.1);
+    const prePad = Math.floor(sr * 0.01);
+    const sliceDur = 0.12;
+
+    const rmsEnv = [];
+    for (let i = 0; i < data.length - windowSize; i += windowSize) {
+      let sum = 0;
+      for (let j = 0; j < windowSize; j++) sum += data[i+j] * data[i+j];
+      rmsEnv.push({ sample: i, rms: Math.sqrt(sum / windowSize) });
+    }
+    const peakRms = Math.max(...rmsEnv.map(e => e.rms));
+    const threshold = peakRms * 0.15;
+    let lastHit = -minGap;
+    for (const entry of rmsEnv) {
+      if (entry.rms > threshold && (entry.sample - lastHit) > minGap) {
+        const startSample = Math.max(0, entry.sample - prePad);
+        tickSlices.push({ start: startSample / sr, duration: sliceDur });
+        lastHit = entry.sample;
+      }
+    }
+    document.getElementById('tick-status').textContent = tickSlices.length + ' samples loaded';
+    document.getElementById('tick-status').style.color = '#00ff88';
+
+    // Build individual buttons for each slice
+    const grid = document.getElementById('tick-grid');
+    tickSlices.forEach((slice, i) => {
+      const card = document.createElement('div');
+      card.className = 'card';
+      const startMs = Math.round(slice.start * 1000);
+      card.innerHTML = `
+        <h2>Tick ${i + 1}</h2>
+        <span class="tag">TICK</span>
+        <p class="desc">Starts at ${startMs}ms in the MP3 (${slice.duration * 1000}ms slice)</p>
+        <button onclick="playSlice(${i})">Play</button>
+        <button class="secondary" onclick="playRepeat(() => playSlice(${i}))">Play 3x</button>
+        <button class="secondary" onclick="saveSliceAsWav(${i})">Save WAV</button>
+      `;
+      grid.appendChild(card);
+    });
+  } catch (e) {
+    document.getElementById('tick-status').textContent = 'Failed to load MP3';
+    console.warn('Tick MP3 load error:', e);
+  }
+})();
+
+function playSlice(index) {
+  if (!tickBuffer || !tickSlices[index]) return;
+  const c = ctx(), now = c.currentTime;
+  const slice = tickSlices[index];
+  const source = c.createBufferSource();
+  source.buffer = tickBuffer;
+  source.connect(c.destination);
+  source.start(now, slice.start, slice.duration);
+}
+
+function saveSliceAsWav(index) {
+  if (!tickBuffer || !tickSlices[index]) return;
+  const slice = tickSlices[index];
+  const sr = tickBuffer.sampleRate;
+  const startSample = Math.floor(slice.start * sr);
+  const numSamples = Math.floor(slice.duration * sr);
+  const channelData = tickBuffer.getChannelData(0);
+  const samples = channelData.slice(startSample, startSample + numSamples);
+
+  // Encode as 16-bit PCM WAV
+  const bytesPerSample = 2;
+  const dataSize = samples.length * bytesPerSample;
+  const buffer = new ArrayBuffer(44 + dataSize);
+  const view = new DataView(buffer);
+
+  function writeStr(offset, str) { for (let i = 0; i < str.length; i++) view.setUint8(offset+i, str.charCodeAt(i)); }
+  writeStr(0, 'RIFF');
+  view.setUint32(4, 36 + dataSize, true);
+  writeStr(8, 'WAVE');
+  writeStr(12, 'fmt ');
+  view.setUint32(16, 16, true);
+  view.setUint16(20, 1, true);        // PCM
+  view.setUint16(22, 1, true);        // mono
+  view.setUint32(24, sr, true);       // sample rate
+  view.setUint32(28, sr * bytesPerSample, true);
+  view.setUint16(32, bytesPerSample, true);
+  view.setUint16(34, 16, true);       // bits per sample
+  writeStr(36, 'data');
+  view.setUint32(40, dataSize, true);
+
+  for (let i = 0; i < samples.length; i++) {
+    const s = Math.max(-1, Math.min(1, samples[i]));
+    view.setInt16(44 + i * 2, s * 0x7FFF, true);
+  }
+
+  const blob = new Blob([buffer], { type: 'audio/wav' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `tick-${index + 1}.wav`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function playRandomTick() {
+  if (!tickBuffer || tickSlices.length === 0) return;
+  playSlice(Math.floor(Math.random() * tickSlices.length));
+}
+
+function playRepeat(fn) {
+  fn();
+  setTimeout(fn, 600);
+  setTimeout(fn, 1200);
+}
+
+// ── Current ringer (reference from sound.js) ──
+function playCurrent() {
+  const c = ctx(), now = c.currentTime;
+  [880, 1320, 1760].forEach((freq, i) => {
+    const osc = c.createOscillator(); osc.type = 'sine'; osc.frequency.value = freq;
+    const g = c.createGain(); g.gain.setValueAtTime(0.25/(i+1), now); g.gain.exponentialRampToValueAtTime(0.001, now+0.6);
+    osc.connect(g); g.connect(c.destination);
+    osc.start(now); osc.stop(now+0.65);
+  });
+}
+
+// ════════════════════════════════════════════
+// RINGER BELLS
+// ════════════════════════════════════════════
+
+// ── R1: Church Bell — deep, resonant, inharmonic partials ──
+function playR1() {
+  const c = ctx(), now = c.currentTime;
+  // Bell-like inharmonic series based on 220Hz fundamental
+  const partials = [
+    { freq: 220,  gain: 0.30, decay: 1.2 },
+    { freq: 440,  gain: 0.20, decay: 1.0 },
+    { freq: 557,  gain: 0.12, decay: 0.8 },  // minor third partial (inharmonic)
+    { freq: 880,  gain: 0.08, decay: 0.6 },
+    { freq: 1137, gain: 0.05, decay: 0.4 },  // slightly off harmonic
+  ];
+  partials.forEach(p => {
+    const osc = c.createOscillator(); osc.type = 'sine'; osc.frequency.value = p.freq;
+    const g = c.createGain(); g.gain.setValueAtTime(p.gain, now); g.gain.exponentialRampToValueAtTime(0.001, now+p.decay);
+    osc.connect(g); g.connect(c.destination);
+    osc.start(now); osc.stop(now+p.decay+0.05);
+  });
+  // Strike transient — short noise burst
+  const sr = c.sampleRate;
+  const nLen = Math.floor(sr * 0.01);
+  const nBuf = c.createBuffer(1, nLen, sr);
+  const nD = nBuf.getChannelData(0);
+  for (let i = 0; i < nLen; i++) nD[i] = (Math.random()*2-1) * Math.exp(-i/(nLen*0.05));
+  const nSrc = c.createBufferSource(); nSrc.buffer = nBuf;
+  const nG = c.createGain(); nG.gain.setValueAtTime(0.3, now); nG.gain.exponentialRampToValueAtTime(0.001, now+0.02);
+  const bp = c.createBiquadFilter(); bp.type='bandpass'; bp.frequency.value=3000; bp.Q.value=1;
+  nSrc.connect(bp); bp.connect(nG); nG.connect(c.destination);
+  nSrc.start(now); nSrc.stop(now+0.01);
+}
+
+// ── R2: Victory Chime — ascending ding-DONG ──
+function playR2() {
+  const c = ctx(), now = c.currentTime;
+  // First note: quick bright ding
+  const notes = [
+    { freq: 660,  time: 0,    gain: 0.20, decay: 0.25 },
+    { freq: 880,  time: 0.12, gain: 0.28, decay: 0.6  },
+  ];
+  notes.forEach(n => {
+    const partials = [1, 2.76, 5.4]; // bell-like ratios
+    partials.forEach((ratio, i) => {
+      const osc = c.createOscillator(); osc.type = 'sine'; osc.frequency.value = n.freq * ratio;
+      const g = c.createGain();
+      const vol = n.gain / (i+1);
+      g.gain.setValueAtTime(vol, now+n.time); g.gain.exponentialRampToValueAtTime(0.001, now+n.time+n.decay);
+      osc.connect(g); g.connect(c.destination);
+      osc.start(now+n.time); osc.stop(now+n.time+n.decay+0.05);
+    });
+  });
+}
+
+// ── R3: Boxing Bell — sharp metallic strike with ring ──
+function playR3() {
+  const c = ctx(), now = c.currentTime, sr = c.sampleRate;
+  // Hard strike transient
+  const nLen = Math.floor(sr * 0.008);
+  const nBuf = c.createBuffer(1, nLen, sr);
+  const nD = nBuf.getChannelData(0);
+  for (let i = 0; i < nLen; i++) nD[i] = (Math.random()*2-1) * Math.exp(-i/(nLen*0.03));
+  const nSrc = c.createBufferSource(); nSrc.buffer = nBuf;
+  const nG = c.createGain(); nG.gain.setValueAtTime(0.5, now); nG.gain.exponentialRampToValueAtTime(0.001, now+0.015);
+  const hp = c.createBiquadFilter(); hp.type='highpass'; hp.frequency.value=2000;
+  nSrc.connect(hp); hp.connect(nG); nG.connect(c.destination);
+  nSrc.start(now); nSrc.stop(now+0.008);
+  // Bell ring — bright, metallic
+  const partials = [
+    { freq: 1200, gain: 0.25, decay: 0.7 },
+    { freq: 1960, gain: 0.12, decay: 0.5 },
+    { freq: 3100, gain: 0.06, decay: 0.3 },
+  ];
+  partials.forEach(p => {
+    const osc = c.createOscillator(); osc.type = 'sine'; osc.frequency.value = p.freq;
+    const g = c.createGain(); g.gain.setValueAtTime(p.gain, now); g.gain.exponentialRampToValueAtTime(0.001, now+p.decay);
+    osc.connect(g); g.connect(c.destination);
+    osc.start(now); osc.stop(now+p.decay+0.05);
+  });
+}
+
+// ── R4: Tubular Bell — orchestral, clear fundamental, shimmer ──
+function playR4() {
+  const c = ctx(), now = c.currentTime;
+  const fundamental = 440;
+  // Tubular bell partials (slightly inharmonic)
+  const partials = [
+    { ratio: 1,    gain: 0.25, decay: 1.0 },
+    { ratio: 2.0,  gain: 0.15, decay: 0.8 },
+    { ratio: 3.01, gain: 0.08, decay: 0.6 },  // slightly detuned
+    { ratio: 4.98, gain: 0.04, decay: 0.4 },  // slightly detuned
+    { ratio: 2.005, gain: 0.10, decay: 0.9 },  // beating with 2nd partial
+  ];
+  partials.forEach(p => {
+    const osc = c.createOscillator(); osc.type = 'sine'; osc.frequency.value = fundamental * p.ratio;
+    const g = c.createGain(); g.gain.setValueAtTime(p.gain, now); g.gain.exponentialRampToValueAtTime(0.001, now+p.decay);
+    osc.connect(g); g.connect(c.destination);
+    osc.start(now); osc.stop(now+p.decay+0.05);
+  });
+  // Soft strike
+  const sr = c.sampleRate;
+  const nLen = Math.floor(sr * 0.015);
+  const nBuf = c.createBuffer(1, nLen, sr);
+  const nD = nBuf.getChannelData(0);
+  for (let i = 0; i < nLen; i++) nD[i] = (Math.random()*2-1) * Math.exp(-i/(nLen*0.06));
+  const nSrc = c.createBufferSource(); nSrc.buffer = nBuf;
+  const nG = c.createGain(); nG.gain.setValueAtTime(0.2, now); nG.gain.exponentialRampToValueAtTime(0.001, now+0.025);
+  nSrc.connect(nG); nG.connect(c.destination);
+  nSrc.start(now); nSrc.stop(now+0.015);
+}
+
+// ── R5: Triple Chime — three ascending bell tones ──
+function playR5() {
+  const c = ctx(), now = c.currentTime;
+  const notes = [
+    { freq: 523,  time: 0,    gain: 0.18, decay: 0.3  }, // C5
+    { freq: 659,  time: 0.1,  gain: 0.20, decay: 0.3  }, // E5
+    { freq: 784,  time: 0.2,  gain: 0.25, decay: 0.5  }, // G5
+  ];
+  notes.forEach(n => {
+    // Each note has bell-like partials
+    [1, 2.76, 5.4].forEach((ratio, i) => {
+      const osc = c.createOscillator(); osc.type = 'sine'; osc.frequency.value = n.freq * ratio;
+      const g = c.createGain();
+      const vol = n.gain / (i*1.5+1);
+      g.gain.setValueAtTime(vol, now+n.time); g.gain.exponentialRampToValueAtTime(0.001, now+n.time+n.decay);
+      osc.connect(g); g.connect(c.destination);
+      osc.start(now+n.time); osc.stop(now+n.time+n.decay+0.05);
+    });
+  });
+}
+
+// ── R6: Gong Shimmer — deep hit that blooms ──
+function playR6() {
+  const c = ctx(), now = c.currentTime, sr = c.sampleRate;
+  // Deep fundamental
+  const osc1 = c.createOscillator(); osc1.type = 'sine'; osc1.frequency.value = 165;
+  const g1 = c.createGain(); g1.gain.setValueAtTime(0.30, now); g1.gain.exponentialRampToValueAtTime(0.001, now+1.5);
+  osc1.connect(g1); g1.connect(c.destination);
+  osc1.start(now); osc1.stop(now+1.55);
+  // Shimmer partials that swell in
+  const shimmers = [
+    { freq: 412,  peakTime: 0.2, gain: 0.10, decay: 1.0 },
+    { freq: 687,  peakTime: 0.3, gain: 0.07, decay: 0.8 },
+    { freq: 1030, peakTime: 0.4, gain: 0.05, decay: 0.6 },
+    { freq: 1455, peakTime: 0.5, gain: 0.03, decay: 0.4 },
+  ];
+  shimmers.forEach(s => {
+    const osc = c.createOscillator(); osc.type = 'sine'; osc.frequency.value = s.freq;
+    const g = c.createGain();
+    g.gain.setValueAtTime(0.001, now);
+    g.gain.linearRampToValueAtTime(s.gain, now+s.peakTime);
+    g.gain.exponentialRampToValueAtTime(0.001, now+s.peakTime+s.decay);
+    osc.connect(g); g.connect(c.destination);
+    osc.start(now); osc.stop(now+s.peakTime+s.decay+0.05);
+  });
+  // Strike impact
+  const nLen = Math.floor(sr * 0.02);
+  const nBuf = c.createBuffer(1, nLen, sr);
+  const nD = nBuf.getChannelData(0);
+  for (let i = 0; i < nLen; i++) nD[i] = (Math.random()*2-1) * Math.exp(-i/(nLen*0.04));
+  const nSrc = c.createBufferSource(); nSrc.buffer = nBuf;
+  const bp = c.createBiquadFilter(); bp.type='lowpass'; bp.frequency.value=800;
+  const nG = c.createGain(); nG.gain.setValueAtTime(0.35, now); nG.gain.exponentialRampToValueAtTime(0.001, now+0.04);
+  nSrc.connect(bp); bp.connect(nG); nG.connect(c.destination);
+  nSrc.start(now); nSrc.stop(now+0.02);
+}
+
+// ════════════════════════════════════════════
+// POINTS BELLS (lighter, shorter)
+// ════════════════════════════════════════════
+
+// ── P1: Desk Bell — quick bright ting ──
+function playP1() {
+  const c = ctx(), now = c.currentTime;
+  const partials = [
+    { freq: 1400, gain: 0.22, decay: 0.25 },
+    { freq: 3500, gain: 0.08, decay: 0.15 },
+    { freq: 5600, gain: 0.03, decay: 0.10 },
+  ];
+  partials.forEach(p => {
+    const osc = c.createOscillator(); osc.type = 'sine'; osc.frequency.value = p.freq;
+    const g = c.createGain(); g.gain.setValueAtTime(p.gain, now); g.gain.exponentialRampToValueAtTime(0.001, now+p.decay);
+    osc.connect(g); g.connect(c.destination);
+    osc.start(now); osc.stop(now+p.decay+0.02);
+  });
+}
+
+// ── P2: Cash Register — bright ping with tiny rattle ──
+function playP2() {
+  const c = ctx(), now = c.currentTime, sr = c.sampleRate;
+  // Bell ping
+  const osc = c.createOscillator(); osc.type = 'sine'; osc.frequency.value = 2200;
+  const g = c.createGain(); g.gain.setValueAtTime(0.22, now); g.gain.exponentialRampToValueAtTime(0.001, now+0.2);
+  osc.connect(g); g.connect(c.destination);
+  osc.start(now); osc.stop(now+0.22);
+  // Second partial
+  const osc2 = c.createOscillator(); osc2.type = 'sine'; osc2.frequency.value = 3300;
+  const g2 = c.createGain(); g2.gain.setValueAtTime(0.08, now); g2.gain.exponentialRampToValueAtTime(0.001, now+0.12);
+  osc2.connect(g2); g2.connect(c.destination);
+  osc2.start(now); osc2.stop(now+0.14);
+  // Tiny mechanical rattle
+  const nLen = Math.floor(sr * 0.03);
+  const nBuf = c.createBuffer(1, nLen, sr);
+  const nD = nBuf.getChannelData(0);
+  for (let i = 0; i < nLen; i++) {
+    const t = i/nLen;
+    nD[i] = (Math.random()*2-1) * Math.exp(-t*5) * (0.5 + 0.5*Math.sin(t*Math.PI*200));
+  }
+  const nSrc = c.createBufferSource(); nSrc.buffer = nBuf;
+  const hp = c.createBiquadFilter(); hp.type='highpass'; hp.frequency.value=4000;
+  const nG = c.createGain(); nG.gain.setValueAtTime(0.15, now); nG.gain.exponentialRampToValueAtTime(0.001, now+0.04);
+  nSrc.connect(hp); hp.connect(nG); nG.connect(c.destination);
+  nSrc.start(now); nSrc.stop(now+0.03);
+}
+
+// ── P3: Soft Chime — gentle warm tone ──
+function playP3() {
+  const c = ctx(), now = c.currentTime;
+  const osc = c.createOscillator(); osc.type = 'sine'; osc.frequency.value = 880;
+  const g = c.createGain();
+  // Soft attack — fade in slightly
+  g.gain.setValueAtTime(0.001, now);
+  g.gain.linearRampToValueAtTime(0.18, now+0.01);
+  g.gain.exponentialRampToValueAtTime(0.001, now+0.35);
+  osc.connect(g); g.connect(c.destination);
+  osc.start(now); osc.stop(now+0.37);
+  // Gentle overtone
+  const osc2 = c.createOscillator(); osc2.type = 'sine'; osc2.frequency.value = 1320;
+  const g2 = c.createGain();
+  g2.gain.setValueAtTime(0.001, now);
+  g2.gain.linearRampToValueAtTime(0.06, now+0.01);
+  g2.gain.exponentialRampToValueAtTime(0.001, now+0.25);
+  osc2.connect(g2); g2.connect(c.destination);
+  osc2.start(now); osc2.stop(now+0.27);
+}
+
+// ── P4: Xylophone Tap — bright, woody, percussive ──
+function playP4() {
+  const c = ctx(), now = c.currentTime;
+  // Main tone
+  const osc = c.createOscillator(); osc.type = 'sine'; osc.frequency.value = 1175; // D6
+  const g = c.createGain(); g.gain.setValueAtTime(0.25, now); g.gain.exponentialRampToValueAtTime(0.001, now+0.2);
+  osc.connect(g); g.connect(c.destination);
+  osc.start(now); osc.stop(now+0.22);
+  // 4x harmonic (xylophone characteristic)
+  const osc2 = c.createOscillator(); osc2.type = 'sine'; osc2.frequency.value = 1175 * 4;
+  const g2 = c.createGain(); g2.gain.setValueAtTime(0.08, now); g2.gain.exponentialRampToValueAtTime(0.001, now+0.08);
+  osc2.connect(g2); g2.connect(c.destination);
+  osc2.start(now); osc2.stop(now+0.1);
+  // Attack transient — very short noise
+  const sr = c.sampleRate;
+  const nLen = Math.floor(sr * 0.005);
+  const nBuf = c.createBuffer(1, nLen, sr);
+  const nD = nBuf.getChannelData(0);
+  for (let i = 0; i < nLen; i++) nD[i] = (Math.random()*2-1) * Math.exp(-i/(nLen*0.03));
+  const nSrc = c.createBufferSource(); nSrc.buffer = nBuf;
+  const nG = c.createGain(); nG.gain.setValueAtTime(0.2, now); nG.gain.exponentialRampToValueAtTime(0.001, now+0.008);
+  nSrc.connect(nG); nG.connect(c.destination);
+  nSrc.start(now); nSrc.stop(now+0.005);
+}
+
+// ── P5: Triangle Ding — bright metallic shimmer ──
+function playP5() {
+  const c = ctx(), now = c.currentTime;
+  // Triangle has dense, high-frequency inharmonic partials
+  const partials = [
+    { freq: 1680, gain: 0.18, decay: 0.30 },
+    { freq: 3760, gain: 0.10, decay: 0.20 },
+    { freq: 6450, gain: 0.05, decay: 0.12 },
+    { freq: 9200, gain: 0.02, decay: 0.08 },
+  ];
+  partials.forEach(p => {
+    const osc = c.createOscillator(); osc.type = 'sine'; osc.frequency.value = p.freq;
+    const g = c.createGain(); g.gain.setValueAtTime(p.gain, now); g.gain.exponentialRampToValueAtTime(0.001, now+p.decay);
+    osc.connect(g); g.connect(c.destination);
+    osc.start(now); osc.stop(now+p.decay+0.02);
+  });
+}
+
+// ── P6: Coin Drop — descending plink ──
+function playP6() {
+  const c = ctx(), now = c.currentTime;
+  const osc = c.createOscillator(); osc.type = 'sine';
+  osc.frequency.setValueAtTime(2400, now);
+  osc.frequency.exponentialRampToValueAtTime(1800, now+0.15);
+  const g = c.createGain(); g.gain.setValueAtTime(0.22, now); g.gain.exponentialRampToValueAtTime(0.001, now+0.18);
+  osc.connect(g); g.connect(c.destination);
+  osc.start(now); osc.stop(now+0.2);
+  // Bright shimmer partial
+  const osc2 = c.createOscillator(); osc2.type = 'sine';
+  osc2.frequency.setValueAtTime(4800, now);
+  osc2.frequency.exponentialRampToValueAtTime(3600, now+0.1);
+  const g2 = c.createGain(); g2.gain.setValueAtTime(0.07, now); g2.gain.exponentialRampToValueAtTime(0.001, now+0.1);
+  osc2.connect(g2); g2.connect(c.destination);
+  osc2.start(now); osc2.stop(now+0.12);
+  // Short attack click
+  const sr = c.sampleRate;
+  const nLen = Math.floor(sr * 0.003);
+  const nBuf = c.createBuffer(1, nLen, sr);
+  const nD = nBuf.getChannelData(0);
+  for (let i = 0; i < nLen; i++) nD[i] = (Math.random()*2-1) * Math.exp(-i/(nLen*0.02));
+  const nSrc = c.createBufferSource(); nSrc.buffer = nBuf;
+  const nG = c.createGain(); nG.gain.setValueAtTime(0.15, now); nG.gain.exponentialRampToValueAtTime(0.001, now+0.005);
+  nSrc.connect(nG); nG.connect(c.destination);
+  nSrc.start(now); nSrc.stop(now+0.003);
+}
+</script>
+</body>
+</html>

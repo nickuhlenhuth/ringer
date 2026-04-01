@@ -10,15 +10,15 @@
     canvas.height = CONFIG.HEIGHT;
 
     // --- Scaling ---
-    const monitorFrame = document.getElementById('monitor-frame');
+    const container = document.getElementById('game-container');
     function resize() {
-        // Account for bezel padding (32px sides, 28px top, 36px bottom) + stand (~58px)
-        const frameW = CONFIG.WIDTH + 64;
-        const frameH = CONFIG.HEIGHT + 64 + 58;
-        const scaleX = window.innerWidth / frameW;
-        const scaleY = window.innerHeight / frameH;
-        const scale = Math.min(scaleX, scaleY, 1); // cap at 1x
-        monitorFrame.style.transform = `scale(${scale})`;
+        const scaleX = window.innerWidth / CONFIG.WIDTH;
+        const scaleY = window.innerHeight / CONFIG.HEIGHT;
+        const scale = Math.min(scaleX, scaleY);
+        container.style.transform = `scale(${scale})`;
+        container.style.transformOrigin = 'top left';
+        container.style.marginLeft = ((window.innerWidth - CONFIG.WIDTH * scale) / 2) + 'px';
+        container.style.marginTop = ((window.innerHeight - CONFIG.HEIGHT * scale) / 2) + 'px';
     }
     window.addEventListener('resize', resize);
     resize();
@@ -27,8 +27,10 @@
     ScoreTicker.init();
 
     // --- Start button ---
-    document.getElementById('start-btn').addEventListener('click', () => {
+    document.getElementById('start-btn').addEventListener('click', async () => {
         Sound.ensureContext();
+        await Sound.init();
+        Sound.playStart();
         Game.startGame();
     });
 
@@ -60,8 +62,8 @@
 
     // --- Ringer label with wide letter-spacing (stencil look) ---
     function drawRingerLabel(text, x, y, lit) {
-        const fontSize = 20;
-        const letterSpacing = 1;
+        const fontSize = 32;
+        const letterSpacing = 2;
         ctx.save();
         ctx.font = `${fontSize}px "Luckiest Guy", "Arial Black", "Impact", sans-serif`;
         ctx.textAlign = 'center';
@@ -107,13 +109,13 @@
         ctx.restore();
     }
 
-    // --- Round counter (1–5 with active number lit, scooted left) ---
+    // --- Round counter (1–7 with active number lit) ---
     function drawRoundCounter(currentRound) {
         const cy = CONFIG.TEXT.shotNumber.y;
-        const fontSize = 80;
-        const spacing = 70;
+        const fontSize = 90;
+        const spacing = 78;
         const totalWidth = (CONFIG.TOTAL_ROUNDS - 1) * spacing;
-        const startX = 529 - totalWidth / 2;
+        const startX = 848 - totalWidth / 2;
 
         for (let i = 1; i <= CONFIG.TOTAL_ROUNDS; i++) {
             const x = startX + (i - 1) * spacing;
@@ -181,22 +183,20 @@
         const gameOverLit = gs.phase === 'GAME_OVER';
         drawRingerLabel('GAME', gx, gy - 14, gameOverLit);
         drawRingerLabel('OVER', gx, gy + 14, gameOverLit);
+
+        // Power meter — always visible
+        PowerMeter.draw(ctx, gs.phase === 'PLAYER_AIM');
     }
 
 
     function renderAim(gs) {
         // Horseshoe lit up above current player's pole
         const home = FlightPath.getHome(gs.currentPlayer);
-        Horseshoe.draw(ctx, home.x, home.y, 0, 1.0, {
+        Horseshoe.draw(ctx, home.x, home.y, 0, CONFIG.FLIGHT_SCALE_MAX, {
             color: '#ffff00',
             glow: true
         });
 
-        // Hold prompt
-        drawNeonText('HOLD SPACE TO THROW', 20, 30, 14, { align: 'left', dim: true });
-
-        // Power meter
-        PowerMeter.draw(ctx);
     }
 
     // Draw shared middle arc ghosts (positions 4–10, drawn once)

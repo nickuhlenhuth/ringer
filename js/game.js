@@ -14,9 +14,8 @@ const Game = (() => {
         tickTimer: 0,         // ms accumulator for tick timing
         scoringTimer: 0,      // ms accumulator for scoring pause
         turnEndTimer: 0,
-        ringerBonus: false,   // extra shot from ringer
-        showRingerText: false,
-        ringerTextTimer: 0,
+        ringerBonus: false,   // extra shot from ringer (only on extra-shot rounds)
+        showRingerText: false, // derived from currentRound in getState()
         lastScore: 0,         // points from the last throw
         gameOverTimer: 0,
         pulsePhase: 0         // for ringer glow pulse
@@ -31,7 +30,6 @@ const Game = (() => {
         state.throwTarget = 0;
         state.currentTick = 0;
         state.ringerBonus = false;
-        state.showRingerText = false;
         state.lastScore = 0;
         ScoreTicker.reset();
     }
@@ -39,7 +37,7 @@ const Game = (() => {
     function startGame() {
         reset();
         state.phase = 'PLAYER_AIM';
-        PowerMeter.show();
+        PowerMeter.reset();
     }
 
     function executeThrow(power) {
@@ -48,7 +46,7 @@ const Game = (() => {
         state.tickTimer = 0;
         state.phase = 'THROWING';
         state.lastScore = 0;
-        PowerMeter.hide();
+        PowerMeter.reset();
         Sound.playTick();
     }
 
@@ -76,9 +74,12 @@ const Game = (() => {
 
                 if (state.throwTarget === CONFIG.RINGER_POSITION) {
                     Sound.playRinger();
-                    state.ringerBonus = true;
-                    state.showRingerText = true;
-                    state.ringerTextTimer = 0;
+                    // Extra shot only on extra-shot-eligible rounds
+                    if (CONFIG.EXTRA_SHOT_ROUNDS.includes(state.currentRound)) {
+                        state.ringerBonus = true;
+                    }
+                } else if (score > 0) {
+                    Sound.playPoints();
                 } else {
                     Sound.playTick();
                 }
@@ -102,13 +103,6 @@ const Game = (() => {
     function updateScoring(dt) {
         state.scoringTimer += dt;
         state.pulsePhase += dt * 0.008;
-
-        if (state.showRingerText) {
-            state.ringerTextTimer += dt;
-            if (state.ringerTextTimer > 2500) {
-                state.showRingerText = false;
-            }
-        }
 
         if (state.scoringTimer >= CONFIG.SCORING_PAUSE) {
             state.phase = 'TURN_END';
@@ -146,7 +140,7 @@ const Game = (() => {
 
         state.phase = 'PLAYER_AIM';
         state.pulsePhase = 0;
-        PowerMeter.show();
+        PowerMeter.reset();
     }
 
     function update(dt) {
@@ -169,7 +163,12 @@ const Game = (() => {
         }
     }
 
-    function getState() { return state; }
+    function getState() {
+        // "RINGER SCORES EXTRA SHOT" lights up during extra-shot-eligible rounds
+        state.showRingerText = CONFIG.EXTRA_SHOT_ROUNDS.includes(state.currentRound)
+            && state.phase !== 'TITLE' && state.phase !== 'GAME_OVER';
+        return state;
+    }
 
     return { reset, startGame, executeThrow, update, getState };
 })();

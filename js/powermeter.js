@@ -5,18 +5,10 @@
 const PowerMeter = (() => {
     let value = 0;
     let active = false;
-    let visible = false;
-
-    function show() {
-        value = 0;
-        active = false;
-        visible = true;
-    }
 
     function start() {
         value = 0;
         active = true;
-        visible = true;
     }
 
     function stop() {
@@ -32,14 +24,12 @@ const PowerMeter = (() => {
         }
     }
 
-    function hide() {
-        visible = false;
+    function reset() {
         value = 0;
         active = false;
     }
 
     function isActive() { return active; }
-    function isVisible() { return visible; }
     function getValue() { return value; }
 
     function powerToPosition(power) {
@@ -57,30 +47,38 @@ const PowerMeter = (() => {
         return 22;
     }
 
-    function draw(ctx) {
-        if (!visible) return;
+    function draw(ctx, lit) {
+        const barX = 32;
+        const barY = 80;
+        const barW = 48;
+        const barH = 224;
+        const pad = 4;
 
-        const barX = 20;
-        const barY = 50;
-        const barW = 30;
-        const barH = 140;
-
-        // Background
         ctx.save();
-        ctx.globalAlpha = 0.7;
-        ctx.fillStyle = '#111';
-        ctx.strokeStyle = '#333';
-        ctx.lineWidth = 2;
-        ctx.fillRect(barX - 4, barY - 4, barW + 8, barH + 8);
-        ctx.strokeRect(barX - 4, barY - 4, barW + 8, barH + 8);
-        ctx.globalAlpha = 1.0;
 
-        // Zone coloring (bottom to top: red-miss, green-scoring, red-overshoot)
+        const baseAlpha = lit ? 1.0 : 0.15;
+        ctx.globalAlpha = baseAlpha;
+
+        // Outer border — neon green outline
+        ctx.strokeStyle = CONFIG.NEON_GREEN;
+        ctx.lineWidth = 2;
+        if (lit) {
+            ctx.shadowColor = CONFIG.NEON_GREEN;
+            ctx.shadowBlur = 12;
+        }
+        ctx.strokeRect(barX - pad, barY - pad, barW + pad * 2, barH + pad * 2);
+        ctx.shadowBlur = 0;
+
+        // Dark interior
+        ctx.fillStyle = '#0a0a0a';
+        ctx.fillRect(barX, barY, barW, barH);
+
+        // Zone coloring (bottom to top)
         const pm = CONFIG.POWER_MAP;
         const zones = [
-            { start: 0, end: pm.underthrowEnd, color: '#661111' },
-            { start: pm.underthrowEnd, end: 0.92, color: '#116611' },
-            { start: 0.92, end: 1.0, color: '#661111' }
+            { start: 0, end: pm.underthrowEnd, color: '#330808' },
+            { start: pm.underthrowEnd, end: 0.92, color: '#082208' },
+            { start: 0.92, end: 1.0, color: '#330808' }
         ];
 
         for (const zone of zones) {
@@ -90,30 +88,54 @@ const PowerMeter = (() => {
             ctx.fillRect(barX, zy, barW, zh);
         }
 
-        // Ringer sweet spot highlight
+        // Ringer sweet spot — brighter green band
         const ringerStart = pm.pos17;
         const ringerEnd = pm.pos18;
         const ry = barY + barH - (ringerEnd * barH);
         const rh = (ringerEnd - ringerStart) * barH;
-        ctx.fillStyle = '#228822';
+        ctx.fillStyle = lit ? '#1a4a1a' : '#0d250d';
         ctx.fillRect(barX, ry, barW, rh);
 
-        // Fill level
+        // Zone divider lines — faint neon ticks
+        const dividers = [pm.underthrowEnd, 0.92];
+        ctx.strokeStyle = CONFIG.NEON_GREEN;
+        ctx.globalAlpha = baseAlpha * 0.3;
+        ctx.lineWidth = 1;
+        for (const d of dividers) {
+            const dy = barY + barH - (d * barH);
+            ctx.beginPath();
+            ctx.moveTo(barX, dy);
+            ctx.lineTo(barX + barW, dy);
+            ctx.stroke();
+        }
+        ctx.globalAlpha = baseAlpha;
+
+        // Fill level (only when active or has value)
         if (active || value > 0) {
             const fillH = value * barH;
             const fillY = barY + barH - fillH;
 
+            // Neon fill glow
             ctx.shadowColor = CONFIG.NEON_GREEN;
-            ctx.shadowBlur = 10;
+            ctx.shadowBlur = 15;
             ctx.fillStyle = CONFIG.NEON_GREEN;
-            ctx.globalAlpha = 0.35;
+            ctx.globalAlpha = 0.25;
             ctx.fillRect(barX, fillY, barW, fillH);
             ctx.globalAlpha = 1.0;
 
-            // Indicator line
+            // Bright indicator line
             ctx.strokeStyle = CONFIG.NEON_GREEN;
-            ctx.shadowBlur = 15;
+            ctx.shadowBlur = 20;
             ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(barX - 8, fillY);
+            ctx.lineTo(barX + barW + 8, fillY);
+            ctx.stroke();
+
+            // Inner bright core line
+            ctx.strokeStyle = '#aaffaa';
+            ctx.shadowBlur = 5;
+            ctx.lineWidth = 1;
             ctx.beginPath();
             ctx.moveTo(barX - 6, fillY);
             ctx.lineTo(barX + barW + 6, fillY);
@@ -121,14 +143,26 @@ const PowerMeter = (() => {
             ctx.shadowBlur = 0;
         }
 
-        // Label
-        ctx.fillStyle = '#888';
-        ctx.font = '11px "Courier New", monospace';
+        // Label — neon style
+        ctx.globalAlpha = baseAlpha;
+        if (lit) {
+            ctx.shadowColor = CONFIG.NEON_GREEN;
+            ctx.shadowBlur = 10;
+        }
+        ctx.fillStyle = CONFIG.NEON_GREEN;
+        ctx.font = '16px "Courier New", monospace';
         ctx.textAlign = 'center';
-        ctx.fillText('POWER', barX + barW / 2, barY + barH + 18);
+        ctx.fillText('POWER', barX + barW / 2, barY + barH + 20);
+
+        // Inner bright text pass
+        if (lit) {
+            ctx.shadowBlur = 3;
+            ctx.fillStyle = '#aaffaa';
+            ctx.fillText('POWER', barX + barW / 2, barY + barH + 20);
+        }
 
         ctx.restore();
     }
 
-    return { show, start, stop, update, hide, draw, isActive, isVisible, getValue, powerToPosition };
+    return { start, stop, update, reset, draw, isActive, getValue, powerToPosition };
 })();

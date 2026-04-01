@@ -9,77 +9,18 @@
 }
 
 body {
-    background: #1a1a2e;
+    background: #000;
     overflow: hidden;
     cursor: default;
     user-select: none;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-}
-
-/* --- Monitor Frame --- */
-
-#monitor-frame {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-#monitor-bezel {
-    background: #1c1c1c;
-    border-radius: 18px;
-    padding: 28px 32px 36px;
-    box-shadow:
-        0 0 0 2px #333,
-        0 0 0 4px #111,
-        0 8px 30px rgba(0,0,0,0.7),
-        inset 0 1px 0 rgba(255,255,255,0.08);
-    position: relative;
-}
-
-#monitor-bezel::after {
-    content: '';
-    position: absolute;
-    bottom: 12px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: #333;
-    box-shadow: 0 0 4px rgba(0,200,0,0.3);
-}
-
-#monitor-stand {
-    width: 120px;
-    height: 40px;
-    background: linear-gradient(to bottom, #222, #1a1a1a);
-    border-radius: 0 0 6px 6px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
-    position: relative;
-}
-
-#monitor-stand::after {
-    content: '';
-    position: absolute;
-    bottom: -8px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 200px;
-    height: 10px;
-    background: linear-gradient(to bottom, #252525, #1a1a1a);
-    border-radius: 4px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.4);
 }
 
 #game-container {
     position: relative;
-    width: 1198px;
-    height: 798px;
+    width: 1920px;
+    height: 1080px;
     background-image: url('../images/new-game-background.jpg');
-    background-size: 1198px 798px;
+    background-size: 1920px 1080px;
     background-repeat: no-repeat;
     border-radius: 4px;
     overflow: hidden;
@@ -89,8 +30,8 @@ body {
     position: absolute;
     top: 0;
     left: 0;
-    width: 1198px;
-    height: 798px;
+    width: 1920px;
+    height: 1080px;
 }
 
 /* --- Player Labels --- */
@@ -99,7 +40,7 @@ body {
     position: absolute;
     z-index: 10;
     font-family: 'Luckiest Guy', cursive;
-    font-size: 30px;
+    font-size: 48px;
     font-weight: normal;
     text-transform: uppercase;
     text-align: center;
@@ -110,16 +51,16 @@ body {
 }
 
 #label-p1 {
-    left: 176px;
-    top: 108px;
-    width: 116px;
+    left: 282px;
+    top: 146px;
+    width: 186px;
     color: #ffd700;
 }
 
 #label-p2 {
-    left: 905px;
-    top: 108px;
-    width: 116px;
+    left: 1450px;
+    top: 146px;
+    width: 186px;
     color: #ff2020;
 }
 
@@ -128,9 +69,9 @@ body {
 .score-ticker {
     position: absolute;
     display: flex;
-    gap: 8px;
+    gap: 12px;
     z-index: 10;
-    padding: 6px 8px;
+    padding: 10px 12px;
     background: #a0a0a0;
     border-radius: 4px;
     box-shadow:
@@ -140,24 +81,28 @@ body {
 }
 
 #score-p1 {
-    left: 176px;
-    top: 144px;
+    left: 282px;
+    top: 195px;
 }
 
 #score-p2 {
-    left: 905px;
-    top: 144px;
+    left: 1450px;
+    top: 195px;
 }
 
 .digit {
-    width: 50px;
-    height: 68px;
+    width: 80px;
+    height: 109px;
     border: 3px solid #a0a0a0;
+    border-top-color: #c8b898;
     border-radius: 3px;
     position: relative;
     overflow: hidden;
     perspective: 200px;
     background: #666;  /* visible as the split-line gap */
+    box-shadow:
+        0 -4px 12px rgba(255,200,100,0.2),
+        0 -1px 4px rgba(255,220,150,0.15);
 }
 
 /* Shared styles for all flap faces */
@@ -167,14 +112,16 @@ body {
     position: absolute;
     left: 0;
     right: 0;
-    height: 50%;        /* each half = 34px */
-    color: #1a1a1a;
+    height: 50%;        /* each half = 54.5px */
+    color: #2a1a0a;
     font-family: 'Courier New', monospace;
-    font-size: 52px;
+    font-size: 83px;
     font-weight: bold;
     text-align: center;
-    line-height: 68px;  /* full height so text is vertically centered across both halves */
-    text-shadow: 0 1px 0 rgba(255,255,255,0.3);
+    line-height: 109px;  /* full height so text is vertically centered across both halves */
+    text-shadow:
+        0 -1px 1px rgba(255,220,160,0.5),
+        0 1px 2px rgba(0,0,0,0.4);
     backface-visibility: hidden;
     overflow: hidden;
 }
@@ -182,49 +129,51 @@ body {
 /* --- Static upper half --- */
 .digit-upper {
     top: 0;
-    background: linear-gradient(to bottom, #f0e8d8, #e8e0d0);
+    background: linear-gradient(to bottom, #fff6e0, #ece4d2);
     box-shadow:
-        inset 0 2px 4px rgba(0,0,0,0.4),
-        inset 2px 0 3px rgba(0,0,0,0.15),
-        inset -2px 0 3px rgba(0,0,0,0.15);
+        inset 0 4px 8px rgba(255,210,140,0.35),
+        inset 0 1px 2px rgba(255,230,180,0.5),
+        inset 2px 0 3px rgba(0,0,0,0.12),
+        inset -2px 0 3px rgba(0,0,0,0.12);
 }
 
 /* --- Static lower half --- */
 .digit-lower {
     bottom: 0;
-    background: linear-gradient(to bottom, #ddd8c8, #d8d0c0);
+    background: linear-gradient(to bottom, #ddd6c4, #ccc4b4);
     line-height: 0px;   /* shift text up so bottom half of glyph shows */
     box-shadow:
-        inset 0 -2px 4px rgba(0,0,0,0.3),
-        inset 2px 0 3px rgba(0,0,0,0.15),
-        inset -2px 0 3px rgba(0,0,0,0.15);
+        inset 0 -2px 4px rgba(0,0,0,0.35),
+        inset 2px 0 3px rgba(0,0,0,0.18),
+        inset -2px 0 3px rgba(0,0,0,0.18);
 }
 
 /* --- Falling flap (top half, old value, folds downward) --- */
 .flap-fall {
     top: 0;
-    background: linear-gradient(to bottom, #f0e8d8, #e8e0d0);
+    background: linear-gradient(to bottom, #fff6e0, #ece4d2);
     transform-origin: bottom center;
     animation: flap-fold-down 400ms ease-in forwards;
     z-index: 2;
     box-shadow:
-        inset 0 2px 4px rgba(0,0,0,0.4),
-        inset 2px 0 3px rgba(0,0,0,0.15),
-        inset -2px 0 3px rgba(0,0,0,0.15);
+        inset 0 4px 8px rgba(255,210,140,0.35),
+        inset 0 1px 2px rgba(255,230,180,0.5),
+        inset 2px 0 3px rgba(0,0,0,0.12),
+        inset -2px 0 3px rgba(0,0,0,0.12);
 }
 
 /* --- Rising flap (bottom half, new value, folds up into place) --- */
 .flap-rise {
     bottom: 0;
-    background: linear-gradient(to bottom, #ddd8c8, #d8d0c0);
+    background: linear-gradient(to bottom, #ddd6c4, #ccc4b4);
     line-height: 0px;
     transform-origin: top center;
     animation: flap-fold-up 400ms ease-out forwards;
     z-index: 2;
     box-shadow:
-        inset 0 -2px 4px rgba(0,0,0,0.3),
-        inset 2px 0 3px rgba(0,0,0,0.15),
-        inset -2px 0 3px rgba(0,0,0,0.15);
+        inset 0 -2px 4px rgba(0,0,0,0.35),
+        inset 2px 0 3px rgba(0,0,0,0.18),
+        inset -2px 0 3px rgba(0,0,0,0.18);
 }
 
 @keyframes flap-fold-down {
@@ -237,37 +186,32 @@ body {
     100% { transform: rotateX(0deg); }
 }
 
-/* --- Start Button --- */
+/* --- Start Button (Arcade) --- */
 
 #start-btn {
     position: absolute;
     top: 12px;
     right: 12px;
     z-index: 20;
-    padding: 8px 18px;
-    font-family: 'Courier New', monospace;
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    font-family: 'Luckiest Guy', cursive;
     font-size: 16px;
-    font-weight: bold;
-    color: #1a1a1a;
-    background: linear-gradient(to bottom, #e8e0d0, #d8d0c0);
-    border: 3px solid #a0a0a0;
-    border-radius: 4px;
+    letter-spacing: 1px;
+    color: #fff;
+    background: #cc0000;
+    border: 4px solid #333;
     cursor: pointer;
-    box-shadow:
-        inset 0 2px 4px rgba(255,255,255,0.4),
-        inset 0 -2px 4px rgba(0,0,0,0.2),
-        0 2px 4px rgba(0,0,0,0.5);
-    text-shadow: 0 1px 0 rgba(255,255,255,0.3);
-    transition: transform 0.1s, box-shadow 0.1s;
+    box-shadow: 0 3px 0 #800000;
+    transition: all 0.1s ease;
 }
 
 #start-btn:hover {
-    background: linear-gradient(to bottom, #f0e8d8, #e0d8c8);
+    background: #dd1111;
 }
 
 #start-btn:active {
     transform: translateY(2px);
-    box-shadow:
-        inset 0 2px 4px rgba(0,0,0,0.3),
-        0 1px 2px rgba(0,0,0,0.3);
+    box-shadow: 0 1px 0 #800000;
 }

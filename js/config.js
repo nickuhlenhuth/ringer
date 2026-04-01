@@ -3,9 +3,9 @@
 // ============================================================
 
 const CONFIG = {
-    // Logical resolution (matches background image)
-    WIDTH: 1198,
-    HEIGHT: 798,
+    // Logical resolution (1920×1080, 16:9 monitor)
+    WIDTH: 1920,
+    HEIGHT: 1080,
 
     // Scoring by position (flat arrays indexed 0–22)
     SCORE: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 1,1,2,3,2,1,1, 0],
@@ -17,7 +17,8 @@ const CONFIG = {
     ],
 
     // Game rules
-    TOTAL_ROUNDS: 5,         // 5 throws each, alternating
+    TOTAL_ROUNDS: 7,         // 7 throws each, alternating
+    EXTRA_SHOT_ROUNDS: [3, 6, 7],  // rounds where ringer grants an extra shot
     RINGER_POSITION: 18,
 
     // Animation timing (ms per tick)
@@ -30,7 +31,7 @@ const CONFIG = {
     SCORING_PAUSE: 3000,     // ms to show score before next turn (1s delay + flap animation)
 
     // Power meter
-    POWER_FILL_RATE: 0.6,    // units per second (0→1 in ~1.7s)
+    POWER_FILL_RATE: 1.17,   // units per second (0→1 in ~0.85s)
     POWER_MAX: 1.0,
 
     // Power → position mapping thresholds
@@ -52,78 +53,78 @@ const CONFIG = {
     NEON_GLOW_BLUR_STRONG: 30,
 
     // Horseshoe display styles
-    GHOST_OPACITY: 0.064,
+    GHOST_OPACITY: 0.04096,
     GHOST_COLOR: '#0a2a0e',
     ACTIVE_COLOR: '#44ff66',
     ACTIVE_GLOW_BLUR: 12,
 
-    // Horseshoe dimensions (at scale 1.0)
+    // Horseshoe dimensions (at scale 1.0, sized to straddle the pole)
     HORSESHOE: {
-        radius: 18,
-        prongLength: 22,
-        lineWidth: 5,
-        dotRadius: 3
+        radius: 40,
+        prongLength: 48,
+        lineWidth: 9,
+        dotRadius: 6
     },
 
     // Player home positions (above own pole, where horseshoe sits before throw)
-    P1_HOME: { x: 190, y: 430 },   // above left pit pole
-    P2_HOME: { x: 1008, y: 430 },  // above right pit pole
+    P1_HOME: { x: 304, y: 582 },   // above left pit pole
+    P2_HOME: { x: 1615, y: 582 },  // above right pit pole
 
     // --- Flight path: Player 1 throws left→right ---
     P1_PATH: {
         // Hardcoded air arc positions 0–14 (4 unique, 7 shared, 4 unique)
-        // Shared section (4–10) is symmetric around x=599 for smooth P2 mirroring
+        // Shared section (4–10) is symmetric around x=960 for smooth P2 mirroring
         air: [
-            { x: 190, y: 430 },   // 0  — home position (matches P1_HOME)
-            { x: 250, y: 418 },   // 1  — rising from left
-            { x: 315, y: 406 },   // 2  — rising towards fountain
-            { x: 380, y: 392 },   // 3  — approaching shared zone
-            { x: 435, y: 388 },   // 4  — enter shared  [mirror x: 763]
-            { x: 495, y: 382 },   // 5  — shared         [mirror x: 703]
-            { x: 555, y: 363 },   // 6  — shared         [mirror x: 643]
-            { x: 599, y: 360 },   // 7  — center apex    [mirror x: 599]
-            { x: 643, y: 363 },   // 8  — shared         [= mirror of pos 6]
-            { x: 703, y: 382 },   // 9  — shared         [= mirror of pos 5]
-            { x: 763, y: 388 },   // 10 — leave shared   [= mirror of pos 4]
-            { x: 818, y: 428 },   // 11 — descending (steeper to avoid P2's start path)
-            { x: 883, y: 450 },   // 12 — descending
-            { x: 935, y: 480 },   // 13 — approaching pit
-            { x: 958, y: 505 }    // 14 — pit entry
+            { x: 304, y: 582 },   // 0  — home position (matches P1_HOME)
+            { x: 401, y: 566 },   // 1  — rising from left
+            { x: 505, y: 550 },   // 2  — rising towards fountain
+            { x: 609, y: 521 },   // 3  — approaching shared zone (raised to avoid P2 overlap)
+            { x: 697, y: 518 },   // 4  — enter shared  [mirror x: 1223]
+            { x: 793, y: 517 },   // 5  — shared         [mirror x: 1127]
+            { x: 890, y: 491 },   // 6  — shared         [mirror x: 1030]
+            { x: 960, y: 487 },   // 7  — center apex    [mirror x: 960]
+            { x: 1030, y: 491 },  // 8  — shared         [= mirror of pos 6]
+            { x: 1127, y: 517 },  // 9  — shared         [= mirror of pos 5]
+            { x: 1223, y: 518 },  // 10 — leave shared   [= mirror of pos 4]
+            { x: 1311, y: 569 },  // 11 — descending (raised to avoid P1 overlap)
+            { x: 1415, y: 609 },  // 12 — descending
+            { x: 1498, y: 650 },  // 13 — approaching pit
+            { x: 1535, y: 683 }   // 14 — pit entry
         ],
-        // Sand pit positions 15–21 (right pit, pole ~1008,640)
+        // Sand pit positions 15–21 (right pit, pole ~1615,867)
         pit: {
-            15: { x: 958, y: 590, rotation: -0.3 },    // top-left corner (1pt)
-            16: { x: 958, y: 690, rotation: 0.3 },     // bottom-left corner (1pt)
-            17: { x: 983, y: 640, rotation: 1.2 },     // left of pole (2pt)
-            18: { x: 1012, y: 655, rotation: Math.PI }, // ON the pole — ringer (3pt)
-            19: { x: 1043, y: 640, rotation: -1.2 },   // right of pole (2pt)
-            20: { x: 1058, y: 590, rotation: 0.3 },    // top-right corner (1pt)
-            21: { x: 1058, y: 690, rotation: -0.3 }    // bottom-right corner (1pt)
+            15: { x: 1535, y: 799, rotation: -0.3 },    // top-left corner (1pt)
+            16: { x: 1535, y: 934, rotation: 0.3 },     // bottom-left corner (1pt)
+            17: { x: 1555, y: 867, rotation: 1.2 },     // left of pole (2pt, spread wider)
+            18: { x: 1622, y: 887, rotation: Math.PI },  // ON the pole — ringer (3pt)
+            19: { x: 1692, y: 867, rotation: -1.2 },    // right of pole (2pt, spread wider)
+            20: { x: 1696, y: 799, rotation: 0.3 },     // top-right corner (1pt)
+            21: { x: 1696, y: 934, rotation: -0.3 }     // bottom-right corner (1pt)
         },
         // Overshoot position 22
-        overshoot: { x: 1150, y: 680, rotation: 0.5 },
+        overshoot: { x: 1843, y: 920, rotation: 0.5 },
         // Pole center (for ringer visual)
-        pole: { x: 1008, y: 640 }
+        pole: { x: 1615, y: 867 }
     },
 
     // Player 2 path is mirrored (computed at runtime in flightpath.js)
 
     // Scale along flight path (perspective: smaller at arc peak)
-    FLIGHT_SCALE_MIN: 0.45,   // at arc peak
-    FLIGHT_SCALE_MAX: 1.0,    // at sand pit
+    FLIGHT_SCALE_MIN: 0.855,   // at arc peak
+    FLIGHT_SCALE_MAX: 1.9,    // at sand pit
 
-    // Text positions
+    // Text positions (y scaled by 1.3534 from original)
     TEXT: {
-        shotInPlay: { x: 171, y: 749 },
-        ringerScores: { x: 545, y: 680 },
-        shotNumber: { x: 599, y: 750 },
-        roundInfo: { x: 599, y: 723 },
-        gameOver: { x: 760, y: 750 }
+        shotInPlay: { x: 274, y: 1014 },
+        ringerScores: { x: 770, y: 920 },
+        shotNumber: { x: 960, y: 1015 },
+        roundInfo: { x: 960, y: 979 },
+        gameOver: { x: 1218, y: 1015 }
     },
 
     // Score ticker positions (on tree silhouettes)
     TICKER: {
-        p1: { x: 127, y: 51 },
-        p2: { x: 976, y: 51 }
+        p1: { x: 203, y: 69 },
+        p2: { x: 1564, y: 69 }
     }
 };
