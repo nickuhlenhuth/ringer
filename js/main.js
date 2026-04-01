@@ -293,6 +293,13 @@
 
     requestAnimationFrame(gameLoop);
 
+    // --- Dark Mode ---
+    const darkOverlay = document.getElementById('dark-overlay');
+    function toggleDarkMode() {
+        darkOverlay.classList.toggle('active');
+    }
+    document.getElementById('dark-btn').addEventListener('click', toggleDarkMode);
+
     // --- Input ---
     let spaceDown = false;
 
@@ -315,6 +322,10 @@
     }
 
     document.addEventListener('keydown', (e) => {
+        if (e.code === 'KeyD' && !e.repeat && !e.ctrlKey && !e.metaKey) {
+            toggleDarkMode();
+            return;
+        }
         if (e.code !== 'Space' || e.repeat) return;
         e.preventDefault();
         beginThrow();
