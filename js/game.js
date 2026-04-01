@@ -38,6 +38,7 @@ const Game = (() => {
         reset();
         state.phase = 'PLAYER_AIM';
         PowerMeter.reset();
+        SpinnerWheel.reset();
     }
 
     function executeThrow(power) {
@@ -47,6 +48,7 @@ const Game = (() => {
         state.phase = 'THROWING';
         state.lastScore = 0;
         PowerMeter.reset();
+        SpinnerWheel.reset();
         Sound.playTick();
     }
 
@@ -141,17 +143,21 @@ const Game = (() => {
         state.phase = 'PLAYER_AIM';
         state.pulsePhase = 0;
         PowerMeter.reset();
+        SpinnerWheel.reset();
     }
 
     function update(dt) {
         switch (state.phase) {
             case 'PLAYER_AIM':
                 PowerMeter.update(dt);
+                SpinnerWheel.update(dt);
                 break;
             case 'THROWING':
+                SpinnerWheel.update(dt);
                 updateThrowing(dt);
                 break;
             case 'SCORING':
+                SpinnerWheel.update(dt);
                 updateScoring(dt);
                 break;
             case 'TURN_END':

@@ -122,6 +122,17 @@ const CONFIG = {
         gameOver: { x: 1218, y: 1015 }
     },
 
+    // Spinner wheel
+    SPINNER: {
+        CENTER_X: 91,
+        CENTER_Y: 220,
+        RADIUS: 70,
+        HIT_RADIUS: 90,       // generous touch target
+        FRICTION: 3.0,        // rad/s^2 decay
+        MAX_VELOCITY: 30.0,   // rad/s cap → power 1.0
+        SEGMENTS: 8
+    },
+
     // Score ticker positions (on tree silhouettes)
     TICKER: {
         p1: { x: 203, y: 69 },

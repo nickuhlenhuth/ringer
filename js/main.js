@@ -184,8 +184,8 @@
         drawRingerLabel('GAME', gx, gy - 14, gameOverLit);
         drawRingerLabel('OVER', gx, gy + 14, gameOverLit);
 
-        // Power meter — always visible
-        PowerMeter.draw(ctx, gs.phase === 'PLAYER_AIM');
+        // Spinner wheel — always visible
+        SpinnerWheel.draw(ctx, gs.phase === 'PLAYER_AIM');
     }
 
 
@@ -300,27 +300,74 @@
     }
     document.getElementById('dark-btn').addEventListener('click', toggleDarkMode);
 
-    // --- Input ---
-    let spaceDown = false;
+    // --- Input (Spinner Wheel) ---
+    let spinnerTracking = false;
 
-    function beginThrow() {
+    function getCanvasCoords(clientX, clientY) {
+        const rect = canvas.getBoundingClientRect();
+        const scaleX = CONFIG.WIDTH / rect.width;
+        const scaleY = CONFIG.HEIGHT / rect.height;
+        return {
+            x: (clientX - rect.left) * scaleX,
+            y: (clientY - rect.top) * scaleY
+        };
+    }
+
+    canvas.addEventListener('mousedown', (e) => {
+        const gs = Game.getState();
+        if (gs.phase !== 'PLAYER_AIM') return;
         Sound.ensureContext();
-        const gs = Game.getState();
-        if (gs.phase === 'PLAYER_AIM') {
-            spaceDown = true;
-            PowerMeter.start();
+        const coords = getCanvasCoords(e.clientX, e.clientY);
+        if (SpinnerWheel.handlePointerDown(coords.x, coords.y)) {
+            spinnerTracking = true;
         }
-    }
+    });
 
-    function releaseThrow() {
-        const gs = Game.getState();
-        if (gs.phase === 'PLAYER_AIM' && spaceDown) {
-            spaceDown = false;
-            const power = PowerMeter.stop();
-            Game.executeThrow(power);
+    canvas.addEventListener('mousemove', (e) => {
+        if (!spinnerTracking) return;
+        const coords = getCanvasCoords(e.clientX, e.clientY);
+        SpinnerWheel.handlePointerMove(coords.x, coords.y);
+    });
+
+    document.addEventListener('mouseup', () => {
+        if (!spinnerTracking) return;
+        spinnerTracking = false;
+        const result = SpinnerWheel.handlePointerUp();
+        if (result.didSpin) {
+            Game.executeThrow(result.power);
         }
-    }
+    });
 
+    canvas.addEventListener('touchstart', (e) => {
+        const gs = Game.getState();
+        if (gs.phase !== 'PLAYER_AIM') return;
+        e.preventDefault();
+        Sound.ensureContext();
+        const touch = e.touches[0];
+        const coords = getCanvasCoords(touch.clientX, touch.clientY);
+        if (SpinnerWheel.handlePointerDown(coords.x, coords.y)) {
+            spinnerTracking = true;
+        }
+    });
+
+    canvas.addEventListener('touchmove', (e) => {
+        if (!spinnerTracking) return;
+        e.preventDefault();
+        const touch = e.touches[0];
+        const coords = getCanvasCoords(touch.clientX, touch.clientY);
+        SpinnerWheel.handlePointerMove(coords.x, coords.y);
+    });
+
+    document.addEventListener('touchend', () => {
+        if (!spinnerTracking) return;
+        spinnerTracking = false;
+        const result = SpinnerWheel.handlePointerUp();
+        if (result.didSpin) {
+            Game.executeThrow(result.power);
+        }
+    });
+
+    // --- Keyboard fallback (SPACE = random-power throw) ---
     document.addEventListener('keydown', (e) => {
         if (e.code === 'KeyD' && !e.repeat && !e.ctrlKey && !e.metaKey) {
             toggleDarkMode();
@@ -328,31 +375,11 @@
         }
         if (e.code !== 'Space' || e.repeat) return;
         e.preventDefault();
-        beginThrow();
-    });
-
-    document.addEventListener('keyup', (e) => {
-        if (e.code !== 'Space') return;
-        e.preventDefault();
-        releaseThrow();
-    });
-
-    // --- Throw button (press-and-hold) ---
-    const throwBtn = document.getElementById('throw-btn');
-
-    throwBtn.addEventListener('mousedown', (e) => {
-        e.preventDefault();
-        beginThrow();
-    });
-    document.addEventListener('mouseup', () => {
-        if (spaceDown) releaseThrow();
-    });
-
-    throwBtn.addEventListener('touchstart', (e) => {
-        e.preventDefault();
-        beginThrow();
-    });
-    document.addEventListener('touchend', () => {
-        if (spaceDown) releaseThrow();
+        const gs = Game.getState();
+        if (gs.phase === 'PLAYER_AIM') {
+            Sound.ensureContext();
+            const power = 0.5 + Math.random() * 0.4; // 0.5–0.9
+            Game.executeThrow(power);
+        }
     });
 })();
