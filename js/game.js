@@ -17,6 +17,8 @@ const Game = (() => {
         ringerBonus: false,   // extra shot from ringer (only on extra-shot rounds)
         showRingerText: false, // derived from currentRound in getState()
         lastScore: 0,         // points from the last throw
+        throwPower: 0,        // power value from spinner (capped 0.0–1.0)
+        rawPower: 0,          // uncapped power for velocity/decel calculations
         gameOverTimer: 0,
         pulsePhase: 0         // for ringer glow pulse
     };
@@ -29,6 +31,8 @@ const Game = (() => {
         state.totalThrows = 0;
         state.throwTarget = 0;
         state.currentTick = 0;
+        state.throwPower = 0;
+        state.rawPower = 0;
         state.ringerBonus = false;
         state.lastScore = 0;
         ScoreTicker.reset();
@@ -41,23 +45,39 @@ const Game = (() => {
         SpinnerWheel.reset();
     }
 
-    function executeThrow(power) {
+    function executeThrow(power, rawPower) {
         state.throwTarget = Math.max(1, PowerMeter.powerToPosition(power));
+        state.throwPower = power;
+        state.rawPower = rawPower || power;
         state.currentTick = 1;
         state.tickTimer = 0;
         state.phase = 'THROWING';
         state.lastScore = 0;
         PowerMeter.reset();
-        // Don't reset spinner — let it coast to a stop visually
         Sound.playTick();
     }
 
     function getTickDelay() {
-        const remaining = state.throwTarget - state.currentTick;
-        for (const slow of CONFIG.TICK_SLOW) {
-            if (remaining <= slow.remaining) return slow.delay;
+        const power = state.throwPower;
+
+        // Base delay: higher power = shorter delay = faster flight
+        const baseDelay = CONFIG.TICK_DELAY_MAX - power * (CONFIG.TICK_DELAY_MAX - CONFIG.TICK_DELAY_MIN);
+
+        // "True" target: where the horseshoe would land if the field were infinite.
+        // For overthrows, phantom ticks extend beyond 22 based on uncapped power,
+        // so the visible portion (up to 22) stays in the "fast" part of the curve.
+        let trueTarget = state.throwTarget;
+        if (state.throwTarget >= 22) {
+            const excessPower = Math.max(0, state.rawPower - 0.92);
+            trueTarget = 22 + excessPower * CONFIG.OVERTHROW_PHANTOM_SCALE;
         }
-        return CONFIG.TICK_BASE_DELAY;
+
+        // Progress: how far through the journey toward the true target (0→1)
+        const progress = state.currentTick / trueTarget;
+        // Curve: gentle at start, steep near end (exponent 3.0 → most slowdown in last ~25%)
+        const multiplier = 1 + Math.pow(progress, CONFIG.DECEL_CURVE) * (CONFIG.DECEL_MAX_MULTIPLIER - 1);
+
+        return baseDelay * multiplier;
     }
 
     function updateThrowing(dt) {
@@ -150,14 +170,11 @@ const Game = (() => {
         switch (state.phase) {
             case 'PLAYER_AIM':
                 PowerMeter.update(dt);
-                SpinnerWheel.update(dt);
                 break;
             case 'THROWING':
-                SpinnerWheel.update(dt);
                 updateThrowing(dt);
                 break;
             case 'SCORING':
-                SpinnerWheel.update(dt);
                 updateScoring(dt);
                 break;
             case 'TURN_END':

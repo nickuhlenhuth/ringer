@@ -9,23 +9,16 @@
     canvas.width = CONFIG.WIDTH;
     canvas.height = CONFIG.HEIGHT;
 
-    // --- Spinner Canvas ---
-    const spinnerCanvas = document.getElementById('spinner-canvas');
-    const spinnerCtx = spinnerCanvas.getContext('2d');
-    spinnerCanvas.width = CONFIG.SPINNER.CANVAS_SIZE;
-    spinnerCanvas.height = CONFIG.SPINNER.CANVAS_SIZE;
-
-    // --- Scaling ---
+    // --- Scaling (gameplay only, no cabinet) ---
     const wrapper = document.getElementById('game-wrapper');
-    const TOTAL_HEIGHT = CONFIG.HEIGHT * 2; // gameplay + cabinet
     function resize() {
         const scaleX = window.innerWidth / CONFIG.WIDTH;
-        const scaleY = window.innerHeight / TOTAL_HEIGHT;
+        const scaleY = window.innerHeight / CONFIG.HEIGHT;
         const scale = Math.min(scaleX, scaleY);
         wrapper.style.transform = `scale(${scale})`;
         wrapper.style.transformOrigin = 'top left';
         wrapper.style.marginLeft = ((window.innerWidth - CONFIG.WIDTH * scale) / 2) + 'px';
-        wrapper.style.marginTop = ((window.innerHeight - TOTAL_HEIGHT * scale) / 2) + 'px';
+        wrapper.style.marginTop = ((window.innerHeight - CONFIG.HEIGHT * scale) / 2) + 'px';
     }
     window.addEventListener('resize', resize);
     resize();
@@ -35,22 +28,24 @@
 
     // --- Dark mode elements ---
     const darkOverlay = document.getElementById('dark-overlay');
-    const cabinetDim = document.getElementById('cabinet-dim');
-    const cabinetPanel = document.getElementById('cabinet-panel');
 
-    // --- Start button ---
+    // --- Pre-game dim overlay ---
     const pregameDim = document.getElementById('pregame-dim');
-    const pregameCabinetDim = document.getElementById('pregame-cabinet-dim');
-    document.getElementById('start-btn').addEventListener('click', async () => {
+
+    // --- Start game (called by left click) ---
+    let gameStarted = false;
+    async function startGameAction() {
+        if (gameStarted) return;
+        gameStarted = true;
         Sound.ensureContext();
         await Sound.init();
         Sound.playStart();
         Game.startGame();
         pregameDim.classList.add('hidden');
-        pregameCabinetDim.classList.add('hidden');
         pregameDim.addEventListener('transitionend', () => pregameDim.remove(), { once: true });
-        pregameCabinetDim.addEventListener('transitionend', () => pregameCabinetDim.remove(), { once: true });
-    });
+        // Lock pointer so USB spinner movementX isn't clipped at screen edges
+        document.body.requestPointerLock();
+    }
 
     // --- Neon text helper ---
     function drawNeonText(text, x, y, fontSize, options = {}) {
@@ -201,10 +196,6 @@
         const gameOverLit = gs.phase === 'GAME_OVER';
         drawRingerLabel('GAME', gx, gy - 14, gameOverLit);
         drawRingerLabel('OVER', gx, gy + 14, gameOverLit);
-
-        // Spinner wheel — drawn on dedicated cabinet canvas
-        spinnerCtx.clearRect(0, 0, CONFIG.SPINNER.CANVAS_SIZE, CONFIG.SPINNER.CANVAS_SIZE);
-        SpinnerWheel.draw(spinnerCtx);
     }
 
 
@@ -315,90 +306,44 @@
     // --- Dark Mode ---
     function toggleDarkMode() {
         darkOverlay.classList.toggle('active');
-        cabinetDim.classList.toggle('active');
-        cabinetPanel.classList.toggle('dark');
-    }
-    document.getElementById('dark-btn').addEventListener('click', toggleDarkMode);
-
-    // --- Input (Spinner Wheel — on cabinet canvas) ---
-    let spinnerTracking = false;
-
-    function getSpinnerCoords(clientX, clientY) {
-        const rect = spinnerCanvas.getBoundingClientRect();
-        const scale = CONFIG.SPINNER.CANVAS_SIZE / rect.width;
-        return {
-            x: (clientX - rect.left) * scale,
-            y: (clientY - rect.top) * scale
-        };
     }
 
-    spinnerCanvas.addEventListener('mousedown', (e) => {
+    // --- Input: Left Click (Red Button) = Start / Restart ---
+    document.addEventListener('mousedown', (e) => {
+        if (e.button !== 0) return; // left click only
+        const gs = Game.getState();
+
+        if (gs.phase === 'TITLE') {
+            startGameAction();
+        } else if (gs.phase === 'GAME_OVER') {
+            gameStarted = false;
+            startGameAction();
+        }
+    });
+
+    // --- Input: Right Click (Black Button) = Dark Mode Toggle ---
+    document.addEventListener('contextmenu', (e) => e.preventDefault());
+    document.addEventListener('mousedown', (e) => {
+        if (e.button !== 2) return; // right click only
+        toggleDarkMode();
+    });
+
+    // --- Input: Mouse X-Axis (USB Spinner) = Throw Power ---
+    document.addEventListener('mousemove', (e) => {
         const gs = Game.getState();
         if (gs.phase !== 'PLAYER_AIM') return;
-        Sound.ensureContext();
-        const coords = getSpinnerCoords(e.clientX, e.clientY);
-        if (SpinnerWheel.handlePointerDown(coords.x, coords.y)) {
-            spinnerTracking = true;
+
+        const result = SpinnerWheel.handleMovementX(e.movementX, performance.now());
+        if (result && result.didSpin) {
+            Sound.ensureContext();
+            Game.executeThrow(result.power, result.rawPower);
         }
     });
 
-    spinnerCanvas.addEventListener('mousemove', (e) => {
-        if (!spinnerTracking) return;
-        const coords = getSpinnerCoords(e.clientX, e.clientY);
-        SpinnerWheel.handlePointerMove(coords.x, coords.y);
-    });
-
-    document.addEventListener('mouseup', () => {
-        if (!spinnerTracking) return;
-        spinnerTracking = false;
-        const result = SpinnerWheel.handlePointerUp();
-        if (result.didSpin) {
-            Game.executeThrow(result.power);
-        }
-    });
-
-    spinnerCanvas.addEventListener('touchstart', (e) => {
-        const gs = Game.getState();
-        if (gs.phase !== 'PLAYER_AIM') return;
-        e.preventDefault();
-        Sound.ensureContext();
-        const touch = e.touches[0];
-        const coords = getSpinnerCoords(touch.clientX, touch.clientY);
-        if (SpinnerWheel.handlePointerDown(coords.x, coords.y)) {
-            spinnerTracking = true;
-        }
-    });
-
-    spinnerCanvas.addEventListener('touchmove', (e) => {
-        if (!spinnerTracking) return;
-        e.preventDefault();
-        const touch = e.touches[0];
-        const coords = getSpinnerCoords(touch.clientX, touch.clientY);
-        SpinnerWheel.handlePointerMove(coords.x, coords.y);
-    });
-
-    document.addEventListener('touchend', () => {
-        if (!spinnerTracking) return;
-        spinnerTracking = false;
-        const result = SpinnerWheel.handlePointerUp();
-        if (result.didSpin) {
-            Game.executeThrow(result.power);
-        }
-    });
-
-    // --- Keyboard fallback (SPACE = random-power throw) ---
+    // --- Keyboard: D = Dark Mode Toggle ---
     document.addEventListener('keydown', (e) => {
         if (e.code === 'KeyD' && !e.repeat && !e.ctrlKey && !e.metaKey) {
             toggleDarkMode();
-            return;
-        }
-        if (e.code !== 'Space' || e.repeat) return;
-        e.preventDefault();
-        const gs = Game.getState();
-        if (gs.phase === 'PLAYER_AIM') {
-            Sound.ensureContext();
-            const power = 0.5 + Math.random() * 0.4; // 0.5–0.9
-            Game.executeThrow(power);
         }
     });
 })();

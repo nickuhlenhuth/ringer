@@ -21,13 +21,14 @@ const CONFIG = {
     EXTRA_SHOT_ROUNDS: [3, 6, 7],  // rounds where ringer grants an extra shot
     RINGER_POSITION: 18,
 
-    // Animation timing (ms per tick)
-    TICK_BASE_DELAY: 500,    // ~2 ticks/sec
-    TICK_SLOW: [
-        { remaining: 3, delay: 600 },
-        { remaining: 2, delay: 800 },
-        { remaining: 1, delay: 1200 }
-    ],
+    // Animation timing (ms per tick) — scales with throw power
+    TICK_DELAY_MIN: 300,     // ms/tick at power=1.0 (fastest flight)
+    TICK_DELAY_MAX: 700,     // ms/tick at power=0.0 (slowest flight)
+
+    // Deceleration curve — maps progress toward "true" landing point
+    DECEL_MAX_MULTIPLIER: 4.0,  // max slowdown factor at final tick
+    DECEL_CURVE: 4.5,           // exponent (higher = more slowdown concentrated near end)
+    OVERTHROW_PHANTOM_SCALE: 50, // how many phantom ticks per unit of excess power beyond overthrow
     SCORING_PAUSE: 3000,     // ms to show score before next turn (1s delay + flap animation)
 
     // Power meter
@@ -122,16 +123,11 @@ const CONFIG = {
         gameOver: { x: 1218, y: 1015 }
     },
 
-    // Spinner wheel (rendered on dedicated cabinet canvas)
-    SPINNER: {
-        CANVAS_SIZE: 800,     // logical size of spinner canvas
-        CENTER_X: 400,        // center of canvas
-        CENTER_Y: 400,        // center of canvas
-        RADIUS: 300,          // large wheel for cabinet
-        HIT_RADIUS: 380,      // generous touch target
-        FRICTION: 8.0,        // rad/s^2 decay
-        MAX_VELOCITY: 30.0,   // rad/s cap → power 1.0
-        SEGMENTS: 8
+    // USB Spinner (GRS Button Hole — mouse X-axis input)
+    USB_SPINNER: {
+        MIN_DX: 15,           // minimum |movementX| per event to start tracking a spin
+        MAX_DX: 80,           // |movementX| per event that maps to power 1.0
+        COOLDOWN: 500         // ms after throw before accepting new input
     },
 
     // Score ticker positions (on tree silhouettes)

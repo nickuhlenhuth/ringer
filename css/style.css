@@ -18,7 +18,7 @@ body {
 #game-wrapper {
     position: relative;
     width: 1920px;
-    height: 2160px;
+    height: 1080px;
 }
 
 #game-container {
@@ -28,52 +28,10 @@ body {
     background-image: url('../images/no-hoot.png');
     background-size: 1920px 1080px;
     background-repeat: no-repeat;
-    border-radius: 4px 4px 0 0;
+    border-radius: 4px;
     overflow: hidden;
 }
 
-/* --- Arcade Cabinet Panel --- */
-
-#cabinet-panel {
-    width: 1920px;
-    height: 1080px;
-    background: url('../images/cabinet.png') center / 1920px 1080px no-repeat;
-    display: flex;
-    overflow: hidden;
-    border-radius: 0 0 4px 4px;
-    position: relative;
-}
-
-/* Ensure children sit above the background */
-#cabinet-panel > * {
-    position: relative;
-    z-index: 1;
-}
-
-#cabinet-left {
-    width: 960px;
-    height: 1080px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding-bottom: 320px;
-}
-
-#spinner-canvas {
-    width: 800px;
-    height: 800px;
-}
-
-#cabinet-right {
-    width: 960px;
-    height: 1080px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 60px;
-    padding-bottom: 320px;
-}
 
 #game-canvas {
     position: absolute;
@@ -102,21 +60,6 @@ body {
     opacity: 0;
 }
 
-#pregame-cabinet-dim {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 1920px;
-    height: 1080px;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 100;
-    pointer-events: none;
-    transition: opacity 0.5s ease;
-}
-
-#pregame-cabinet-dim.hidden {
-    opacity: 0;
-}
 
 /* --- Dark Mode Overlay --- */
 
@@ -137,69 +80,6 @@ body {
     opacity: 1;
 }
 
-#dark-btn {
-    position: absolute;
-    z-index: 1;
-    left: 1350px;
-    top: 310px;
-    width: 180px;
-    height: 180px;
-    border-radius: 50%;
-    font-family: 'Luckiest Guy', cursive;
-    font-size: 36px;
-    letter-spacing: 2px;
-    color: #fff;
-    background: #333;
-    border: 8px solid #555;
-    cursor: pointer;
-    box-shadow: 0 6px 0 #111;
-    transition: all 0.1s ease;
-}
-
-#dark-btn:hover {
-    background: #444;
-}
-
-#dark-btn:active {
-    transform: translateY(4px);
-    box-shadow: 0 2px 0 #111;
-}
-
-/* --- Cabinet Dark Mode Overlay --- */
-
-#cabinet-dim {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 1920px;
-    height: 1080px;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 2;
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-
-#cabinet-dim.active {
-    opacity: 1;
-}
-
-/* Lift interactive elements above the cabinet dim overlay, with their own lighter dim */
-#cabinet-panel.dark #cabinet-left,
-#cabinet-panel.dark #cabinet-right {
-    z-index: 3;
-}
-
-#cabinet-panel.dark #spinner-canvas {
-    filter: brightness(0.775);
-    transition: filter 0.3s ease;
-}
-
-#cabinet-panel.dark #start-btn,
-#cabinet-panel.dark #dark-btn {
-    filter: brightness(0.775);
-    transition: filter 0.3s ease;
-}
 
 /* --- Title Text --- */
 
@@ -413,44 +293,4 @@ body {
     100% { transform: rotateX(0deg); }
 }
 
-/* --- Start Button (Arcade) --- */
-
-#start-btn {
-    position: absolute;
-    z-index: 101;
-    left: 1350px;
-    top: 70px;
-    width: 180px;
-    height: 180px;
-    border-radius: 50%;
-    font-family: 'Luckiest Guy', cursive;
-    font-size: 40px;
-    letter-spacing: 2px;
-    color: #fff;
-    background: #cc0000;
-    border: 8px solid #333;
-    cursor: pointer;
-    box-shadow:
-        0 6px 0 #800000,
-        0 0 15px rgba(255, 0, 0, 0.6),
-        0 0 40px rgba(255, 0, 0, 0.4),
-        0 0 80px rgba(255, 0, 0, 0.2);
-    transition: all 0.1s ease;
-}
-
-#start-btn:hover {
-    background: #dd1111;
-    box-shadow:
-        0 6px 0 #800000,
-        0 0 20px rgba(255, 0, 0, 0.8),
-        0 0 50px rgba(255, 0, 0, 0.5),
-        0 0 100px rgba(255, 0, 0, 0.3);
-}
-
-#start-btn:active {
-    transform: translateY(4px);
-    box-shadow: 0 2px 0 #800000;
-}
-
-/* --- Throw Button (below power meter) --- */
 
